@@ -1,0 +1,90 @@
+{
+    "stepper": {
+        "steps_per_rev": 4096,
+        "enabled": true,
+        "min_step_delay_us": 1200,
+        "motors": [
+            {
+                "wheel_diameter_mm": 69.0,
+                "pins": [
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            },
+            {
+                "wheel_diameter_mm": 69.0,
+                "pins": [
+                    9,
+                    8,
+                    7,
+                    6
+                ]
+            },
+            {
+                "wheel_diameter_mm": 69.0,
+                "pins": [
+                    -1,
+                    -1,
+                    -1,
+                    -1
+                ]
+            },
+            {
+                "wheel_diameter_mm": 69.0,
+                "pins": [
+                    -1,
+                    -1,
+                    -1,
+                    -1
+                ]
+            }
+        ],
+        "wheel_spacing_mm": 110.0
+    },
+    "mqtt": {
+        "mqttport": 1883,
+        "mqttuser": "",
+        "devicename": "",
+        "mqttpwd": "",
+        "mqtthost": "",
+        "enabled": false,
+        "mqttsecure": "no"
+    },
+    "wordsearch": {
+        "wordsearch_file": "wordsearch.json",
+        "run_on_power_up": true,
+        "enabled": false
+    },
+    "wifi": {
+        "wifissid1": "",
+        "enabled": false,
+        "wifipwd1": ""
+    },
+    "hullos": {
+        "program_folder": "/HullOS/code/",
+        "default_program": "default.pyish",
+        "enabled": true,
+        "run on power up": true
+    },
+    "clock": {
+        "sync_timeout_ms": 5000,
+        "sync_on_start": true,
+        "enabled": false,
+        "tz_offset_minutes": 0,
+        "ntpserver": "pool.ntp.org",
+        "resync_minutes": 180
+    },
+    "pixel": {
+        "panel_width": 12,
+        "y_panels": 1,
+        "pixeltype": "RGB",
+        "x_panels": 1,
+        "enabled": true,
+        "panel_type": "Pixel-string",
+        "pixelpin": 22,
+        "brightness": 1.0,
+        "panel_height": 1
+    }
+}
