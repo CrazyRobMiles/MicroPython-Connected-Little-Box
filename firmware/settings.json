@@ -1,66 +1,74 @@
 {
     "stepper": {
-        "steps_per_rev": 4096,
-        "enabled": true,
-        "min_step_delay_us": 1200,
         "motors": [
             {
-                "wheel_diameter_mm": 69.0,
                 "pins": [
                     2,
                     3,
                     4,
                     5
-                ]
+                ],
+                "wheel_diameter_mm": 69.0
             },
             {
-                "wheel_diameter_mm": 69.0,
                 "pins": [
                     9,
                     8,
                     7,
                     6
-                ]
+                ],
+                "wheel_diameter_mm": 69.0
             },
             {
-                "wheel_diameter_mm": 69.0,
                 "pins": [
                     -1,
                     -1,
                     -1,
                     -1
-                ]
+                ],
+                "wheel_diameter_mm": 69.0
             },
             {
-                "wheel_diameter_mm": 69.0,
                 "pins": [
                     -1,
                     -1,
                     -1,
                     -1
-                ]
+                ],
+                "wheel_diameter_mm": 69.0
             }
         ],
+        "enabled": false,
+        "min_step_delay_us": 1200,
+        "steps_per_rev": 4096,
         "wheel_spacing_mm": 110.0
     },
     "mqtt": {
-        "mqttport": 1883,
         "mqttuser": "",
-        "devicename": "",
+        "topicbase": "",
         "mqttpwd": "",
+        "devicename": "",
         "mqtthost": "",
-        "enabled": false,
-        "mqttsecure": "no"
+        "mqttport": 1883,
+        "mqttsecure": "no",
+        "enabled": true
     },
-    "wordsearch": {
-        "wordsearch_file": "wordsearch.json",
-        "run_on_power_up": true,
-        "enabled": false
+    "pixel": {
+        "y_panels": 1,
+        "animation": "None",
+        "panel_width": 12,
+        "pixeltype": "RGB",
+        "x_panels": 1,
+        "enabled": true,
+        "panel_type": "Pixel-string",
+        "brightness": 1.0,
+        "pixelpin": 22,
+        "panel_height": 1
     },
-    "wifi": {
-        "wifissid1": "",
-        "enabled": false,
-        "wifipwd1": ""
+    "blink": {
+        "delay_seconds": 1.0,
+        "enabled": true,
+        "pin": "LED"
     },
     "hullos": {
         "program_folder": "/HullOS/code/",
@@ -71,20 +79,19 @@
     "clock": {
         "sync_timeout_ms": 5000,
         "sync_on_start": true,
-        "enabled": false,
+        "enabled": true,
         "tz_offset_minutes": 0,
         "ntpserver": "pool.ntp.org",
         "resync_minutes": 180
     },
-    "pixel": {
-        "panel_width": 12,
-        "y_panels": 1,
-        "pixeltype": "RGB",
-        "x_panels": 1,
+    "wifi": {
+        "wifissid1": "",
         "enabled": true,
-        "panel_type": "Pixel-string",
-        "pixelpin": 22,
-        "brightness": 1.0,
-        "panel_height": 1
+        "wifipwd1": ""
+    },
+    "wordsearch": {
+        "wordsearch_file": "wordsearch.json",
+        "run_on_power_up": true,
+        "enabled": false
     }
 }

@@ -21,24 +21,30 @@
 - Core features: stable
 - No interpolation between sprite positions
 ### Clock Manager
-- Core features: stable
+- Connection to NTP: stable
+- Local Real Time Clock support
+- Clock events for second, minute, hour day
 ### WiFi
 - Core features: stable
 - No support for re-connection if a network connection fails
 - Only one set of WiFi settings supported
 ### MQTT 
-- Core features: stable
+- Setup and maintain an MQTT connection: stable
+- Sending mqtt messages: stable
+- Receiving MQTT messages: stable
+- No manager binding to MQTT topics
 - No support for secure sockets
 ### stepper_manager
 - Core stepping: stable
 - Timed moves: working
 - Arc motion: working
 ## Graphics
-- CoordMap: stable with 
+- CoordMap: stable with direct buffer access
 - Sprite: stable
 - Frame: stable
 - LightPanel: stable
 - Text rendering: stable
+- Animation framework stable but needing more animations
 ## Application Managers
 ### wordsearch_manager
 - Clock mode: stable

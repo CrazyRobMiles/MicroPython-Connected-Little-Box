@@ -15,9 +15,6 @@ class Manager(CLBManager):
     version = "1.1.0"
     dependencies = []  # none
 
-    STATE_DISABLED = "disabled"
-    STATE_READY    = "ready"
-    STATE_ERROR    = "error"
     STATE_MOVING   = "moving"
 
     # 8-step half-step sequence (IN1..IN4)
@@ -62,7 +59,7 @@ class Manager(CLBManager):
         try:
             self._build_motors()
             self._start_timer()
-            self.state = self.STATE_READY
+            self.state = self.OK
             self.set_status(7100, f"Stepper ready ({len(self._m)} motor(s)), IRQ tick {self._tick_us}µs")
         except Exception as e:
             self.state = self.STATE_ERROR
@@ -256,7 +253,7 @@ class Manager(CLBManager):
             m["remain"] = 0
             p1,p2,p3,p4 = m["pins"]
             p1.value(0); p2.value(0); p3.value(0); p4.value(0)
-        self.state = self.STATE_READY
+        self.state = self.OK
         self.set_status(7203, "Stopped")
 
     def _cmd_moving(self, *args):
@@ -271,5 +268,5 @@ class Manager(CLBManager):
             for m in self._m:
                 p1,p2,p3,p4 = m["pins"]
                 p1.value(0); p2.value(0); p3.value(0); p4.value(0)
-            self.state = self.STATE_READY
+            self.state = self.OK
             self.set_status(7205, "Move complete")

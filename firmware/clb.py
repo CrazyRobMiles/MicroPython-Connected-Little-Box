@@ -190,6 +190,8 @@ class CLB:
         if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
             char = sys.stdin.read(1)
             if char == '\n':
+                sys.stdout.write("\r\x1b[K")
+                print(f"{self._input_buffer}\n")
                 self.handle_command(self._input_buffer.strip())
                 self._input_buffer = ""
             else:
@@ -283,8 +285,6 @@ class CLB:
         """
         if not line:
             return
-
-        print("\n")
 
         line = line.strip()
         if not line:
