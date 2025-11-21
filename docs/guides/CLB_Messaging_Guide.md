@@ -16,7 +16,7 @@ Every box listens on:
 
  `devicename` is initially generated from the device's unique ID. 
 
- `topicbase` initially set to the string `lb/clb`. You can edit these values at the command console using the `set` command:
+ `topicbase` initially set to the string `lb/data`. You can edit these values at the command console using the `set` command:
 
     set mqtt_devicename=porch
 

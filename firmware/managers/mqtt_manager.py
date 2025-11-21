@@ -25,7 +25,7 @@ class Manager(CLBManager):
             "devicename": default_name,
 
             # Namespace for all CLB messaging
-            "topicbase": "clb"
+            "topicbase": "lb/data"
         })
 
         self.client = None
