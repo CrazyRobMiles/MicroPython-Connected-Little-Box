@@ -3,19 +3,19 @@
         "motors": [
             {
                 "pins": [
-                    2,
-                    3,
-                    4,
-                    5
+                    -1,
+                    -1,
+                    -1,
+                    -1
                 ],
                 "wheel_diameter_mm": 69.0
             },
             {
                 "pins": [
-                    9,
-                    8,
-                    7,
-                    6
+                    -1,
+                    -1,
+                    -1,
+                    -1
                 ],
                 "wheel_diameter_mm": 69.0
             },
@@ -43,38 +43,30 @@
         "steps_per_rev": 4096,
         "wheel_spacing_mm": 110.0
     },
-    "mqtt": {
-        "mqttuser": "",
-        "topicbase": "",
-        "mqttpwd": "",
-        "devicename": "",
-        "mqtthost": "",
-        "mqttport": 1883,
-        "mqttsecure": "no",
-        "enabled": true
+    "wordsearch": {
+        "wordsearch_display_gap_ms": 5000,
+        "wordsearch_word_delay_ms": 1000,
+        "run_on_power_up": true,
+        "wordsearch_letter_delay_ms": 250,
+        "wordsearch_file": "Clock.json",
+        "enabled": false
     },
-    "pixel": {
-        "y_panels": 1,
-        "animation": "None",
-        "panel_width": 12,
-        "pixeltype": "RGB",
-        "x_panels": 1,
-        "enabled": true,
-        "panel_type": "Pixel-string",
-        "brightness": 1.0,
-        "pixelpin": 22,
-        "panel_height": 1
+    "wifi": {
+        "wifissid1": "",
+        "enabled": false,
+        "wifipwd1": ""
     },
-    "blink": {
-        "delay_seconds": 1.0,
+    "updater": {
         "enabled": true,
-        "pin": "LED"
+        "check_interval_minutes": 120,
+        "manifest_url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/manifest.json",
+        "auto_restart": true
     },
     "hullos": {
         "program_folder": "/HullOS/code/",
         "default_program": "default.pyish",
         "enabled": true,
-        "run on power up": true
+        "run on power up": false
     },
     "clock": {
         "sync_timeout_ms": 5000,
@@ -84,14 +76,30 @@
         "ntpserver": "pool.ntp.org",
         "resync_minutes": 180
     },
-    "wifi": {
-        "wifissid1": "",
-        "enabled": true,
-        "wifipwd1": ""
-    },
-    "wordsearch": {
-        "wordsearch_file": "wordsearch.json",
-        "run_on_power_up": true,
+    "mqtt": {
+        "mqttuser": "",
+        "topicbase": "lb/data",
+        "mqttpwd": "",
+        "mqtthost": "",
+        "mqttport": 1883,
+        "mqttsecure": "no",
         "enabled": false
+    },
+    "pixel": {
+        "y_panels": 1,
+        "animation": "None",
+        "panel_width": 8,
+        "pixeltype": "RGB",
+        "x_panels": 3,
+        "enabled": true,
+        "panel_type": "Multi-panels-x",
+        "brightness": 1.0,
+        "pixelpin": 18,
+        "panel_height": 8
+    },
+    "blink": {
+        "delay_seconds": 1.0,
+        "enabled": true,
+        "pin": "LED"
     }
 }

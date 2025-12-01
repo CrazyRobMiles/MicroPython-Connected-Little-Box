@@ -1,0 +1,64 @@
+name: Build CLB Manifest
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build_manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Generate Manifest
+      id: manifest
+      run: |
+        echo "{" > manifest.json
+        echo '  "files": {' >> manifest.json
+
+        REPO="CrazyRobMiles/MicroPython-Connected-Little-Box"
+
+        FIRST=1
+        for f in $(find . -type f -name "*.py" ! -path "./.github/*"); do
+          FILEPATH=${f#./}  # remove leading ./ for JSON paths
+
+          # Extract version
+          VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
+          if [ -z "$VERSION" ]; then
+            VERSION=$(grep -Eo 'version *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION="0.0.0"
+          fi
+
+          SHA=$(sha256sum "$f" | cut -d' ' -f1)
+          URL="https://raw.githubusercontent.com/$REPO/main/$FILEPATH"
+
+          if [ $FIRST -eq 1 ]; then
+            FIRST=0
+          else
+            echo ',' >> manifest.json
+          fi
+
+          echo "    \"$FILEPATH\": {" >> manifest.json
+          echo "      \"version\": \"$VERSION\"," >> manifest.json
+          echo "      \"sha\": \"$SHA\"," >> manifest.json
+          echo "      \"url\": \"$URL\"" >> manifest.json
+          echo -n "    }" >> manifest.json
+        done
+
+        echo "" >> manifest.json
+        echo '  }' >> manifest.json
+        echo '}' >> manifest.json
+
+        echo "Manifest generated:"
+        cat manifest.json
+
+    - name: Commit and push manifest.json
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-generated manifest.json"
+        file_pattern: "manifest.json"

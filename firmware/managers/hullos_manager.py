@@ -15,7 +15,7 @@ class Manager(CLBManager):
     def __init__(self,clb):
         super().__init__(clb,defaults={
             "default_program": "default.pyish",
-            "program_folder":"/HullOS/code/",
+            "program_folder":"/HullOS/code",
             "run on power up":True
         })
         self.engine = Engine(clb)
@@ -97,7 +97,7 @@ class Manager(CLBManager):
             return
 
         try:
-            with open(folder+program_name, "r") as f:
+            with open(folder+'/'+program_name, "r") as f:
                 code = f.read()
         except Exception as e:
             print(f"Program {program_name} in {folder} read failed")
