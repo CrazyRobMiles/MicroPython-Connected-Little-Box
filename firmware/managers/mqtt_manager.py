@@ -1,32 +1,39 @@
+# /managers/mqtt_manager.py
 from managers.base import CLBManager
+from managers.event import Event
 from umqtt.simple import MQTTClient
 import time
 import machine
 
 class Manager(CLBManager):
-    version = "1.5.0"
+    version = "2.0.0"
     dependencies = ["wifi"]
 
+    STATE_WAITING = "waiting"
     STATE_CONNECTING = "connecting"
 
     def __init__(self, clb):
         uid = machine.unique_id().hex().upper()
         default_name = f"CLB-{uid}"
 
-        # Only essential, persistable settings
         super().__init__(clb, defaults={
             "mqtthost": "",
             "mqttport": 1883,
             "mqttuser": "",
             "mqttpwd": "",
             "mqttsecure": "no",
-
-            # Editable box name (used for addressing)
             "devicename": default_name,
-
-            # Namespace for all CLB messaging
             "topicbase": "lb/data"
         })
+
+        # --- FIXED EVENT SET (mirrors approach in clock_manager) ---
+        self.events = {
+            "mqtt.connected":    Event("mqtt.connected",    "MQTT connection established", self),
+            "mqtt.disconnected": Event("mqtt.disconnected", "MQTT connection lost",        self),
+            "mqtt.message":      Event("mqtt.message",      "Any MQTT message received",   self),
+            # Topic-specific events are *not* dynamically generated.
+            # OTA managers should filter themselves inside the handler.
+        }
 
         self.client = None
         self.last_loop_time = 0
@@ -35,11 +42,10 @@ class Manager(CLBManager):
     # ---------------------------------------------------------------------
     # SETUP
     # ---------------------------------------------------------------------
-
     def setup(self, settings):
         super().setup(settings)
         if not self.enabled:
-            self.state = self.STATE_ERROR
+            self.state = self.STATE_DISABLED
             return
 
         self.host = self.settings["mqtthost"]
@@ -50,8 +56,7 @@ class Manager(CLBManager):
         self.topicbase = self.settings["topicbase"]
 
         self.topic_receive = f"{self.topicbase}/{self.devicename}"
-
-        print(f"Listening on:{self.topic_receive}")
+        print(f"[MQTT] Listening on: {self.topic_receive}")
 
         if not self.host:
             self.state = self.STATE_ERROR
@@ -59,29 +64,28 @@ class Manager(CLBManager):
             return
 
         self.state = self.STATE_WAITING
-        self.set_status(3001, "Waiting for WiFi to connect MQTT")
+        self.set_status(3001, "MQTT waiting for WiFi")
 
     # ---------------------------------------------------------------------
     # UPDATE LOOP
     # ---------------------------------------------------------------------
-
     def unresolved_dependencies(self):
         return [
             m for m in self.dependency_instances
-            if not hasattr(m, "state") or m.state not in ("connected", "OK", "ok")
+            if not hasattr(m, "state") or m.state not in ("ok", "connected", "OK")
         ]
 
     def update(self):
         if not self.enabled:
             return
 
-        # Wait for WiFi manager to report OK
+        # Wait for WiFi
         if self.state == self.STATE_WAITING:
             if self.unresolved_dependencies():
                 return
             self.state = self.STATE_CONNECTING
 
-        # Connect to MQTT
+        # Connect
         if self.state == self.STATE_CONNECTING:
             try:
                 self.client = MQTTClient(
@@ -92,77 +96,83 @@ class Manager(CLBManager):
                     password=self.password or None,
                     ssl=False
                 )
-                self.client.set_callback(self._on_message)
+                self.client.set_callback(self._on_mqtt)
                 self.client.connect()
 
-                # Subscribe to our own box's command topic
+                # Subscribe to own topic
                 self.client.subscribe(self.topic_receive)
                 self.set_status(3008, f"Subscribed to {self.topic_receive}")
 
                 self.state = self.STATE_OK
                 self.set_status(3003, f"MQTT connected as {self.devicename}")
 
+                # --- FIRE EVENT ---
+                self.events["mqtt.connected"].publish({"device": self.devicename})
+
             except Exception as e:
                 self.state = self.STATE_ERROR
                 self.set_status(3004, f"MQTT connection failed: {e}")
+                self.events["mqtt.disconnected"].publish({"error": str(e)})
                 return
 
-        # Handle incoming messages occasionally
+        # Check for messages
         if self.state == self.STATE_OK:
             if time.ticks_diff(time.ticks_ms(), self.last_loop_time) > 250:
                 try:
                     self.client.check_msg()
                 except Exception as e:
                     self.state = self.STATE_ERROR
-                    self.set_status(3005, f"MQTT connection lost: {e}")
+                    self.set_status(3005, f"MQTT lost: {e}")
+                    self.events["mqtt.disconnected"].publish({"error": str(e)})
                 self.last_loop_time = time.ticks_ms()
 
     # ---------------------------------------------------------------------
-    # MQTT MESSAGE HANDLER
+    # MQTT CALLBACK
     # ---------------------------------------------------------------------
-
-    def _on_message(self, topic, msg):
+    def _on_mqtt(self, topic, msg):
         topic = topic.decode()
-        data  = msg.decode()
+        payload = msg.decode()
 
-        self.set_status(3014, f"Message on {topic}: {data}")
+        # --- FIRE GENERIC MQTT MESSAGE EVENT ---
+        self.events["mqtt.message"].publish({
+            "topic": topic,
+            "payload": payload
+        })
 
+        # Treat messages on own topic as remote console commands
         if topic == self.topic_receive:
             try:
-                # Run incoming message as console command
-                self.clb.handle_command(data)
+                self.clb.handle_command(payload)
             except Exception as e:
                 self.set_status(3015, f"Command error: {e}")
 
     # ---------------------------------------------------------------------
-    # CLEAN TEARDOWN
+    # SHUTDOWN
     # ---------------------------------------------------------------------
-
     def teardown(self):
         if self.client:
             try:
                 self.client.disconnect()
-            except Exception as e:
-                self.set_status(3016, f"Error disconnecting: {e}")
+            except Exception:
+                pass
         self.client = None
+        self.events["mqtt.disconnected"].publish({"error": "shutdown"})
         self.set_status(3017, "MQTT manager shut down")
 
     # ---------------------------------------------------------------------
-    # PUBLIC COMMAND INTERFACE
+    # COMMAND INTERFACE
     # ---------------------------------------------------------------------
-
     def get_interface(self):
         return {
-            "on":   ("Enable MQTT manager", self.command_enable),
-            "off":  ("Disable MQTT manager", self.command_disable),
-            "send": ("send <box> <msg> — send a command to another box",
-                     self.command_send),
+            "on":   ("Enable MQTT", self.command_enable),
+            "off":  ("Disable MQTT", self.command_disable),
+            "send": ("send <box> <cmd>", self.command_send)
         }
 
     def command_enable(self):
         self.enabled = True
-        self.set_status(3018, "MQTT manually enabled")
         self.setup(self.settings)
+        self.set_status(3018, "MQTT manually enabled")
 
     def command_disable(self):
         self.enabled = False
@@ -170,28 +180,12 @@ class Manager(CLBManager):
         self.teardown()
         self.set_status(3019, "MQTT manually disabled")
 
-    # ---------------------------------------------------------------------
-    # SEND A COMMAND TO ANOTHER BOX
-    # ---------------------------------------------------------------------
-
-    def command_send(self, target_box_name, message):
-        """
-        Publish a command to another CLB box.
-        Example:
-            mqtt.send hallway "pixel.fill 255 0 0"
-        """
-
+    def command_send(self, target, message):
         if not self.client:
             self.set_status(3020, "MQTT not connected")
             return
 
-        if not target_box_name:
-            self.set_status(3021, "No box name specified")
-            return
-
-        # Target topic: clb/<target_box_name>
-        topic = f"{self.topicbase}/{target_box_name}"
-
+        topic = f"{self.topicbase}/{target}"
         try:
             self.client.publish(topic, message)
             self.set_status(3022, f"Sent to {topic}")

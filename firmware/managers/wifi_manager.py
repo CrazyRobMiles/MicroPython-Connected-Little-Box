@@ -71,11 +71,11 @@ class Manager(CLBManager):
         except Exception as e:
             self.set_status(2013, f"WiFi teardown error: {e}")
 
-    def get_commands(self):
-        return [
-            ("wifi-on", self.command_enable_wifi, "Enable WiFi manager"),
-            ("wifi-off", self.command_disable_wifi, "Disable WiFi manager")
-        ]
+    def get_interface(self):
+        return {
+            "on": ("Enable WiFi", self.command_enable_wifi ),
+            "off": ("Disable WiFi manager", self.command_disable_wifi )
+        }
 
     def command_enable_wifi(self):
         self.enabled = True

@@ -17,18 +17,17 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Generate Manifest
-      id: manifest
       run: |
         echo "{" > manifest.json
         echo '  "files": {' >> manifest.json
 
         REPO="CrazyRobMiles/MicroPython-Connected-Little-Box"
-
         FIRST=1
-        for f in $(find . -type f -name "*.py" ! -path "./.github/*"); do
-          FILEPATH=${f#./}  # remove leading ./ for JSON paths
 
-          # Extract version
+        for f in $(find . -type f -name "*.py" ! -path "./.github/*"); do
+          FILEPATH=${f#./}
+
+          # Extract version string
           VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
           if [ -z "$VERSION" ]; then
             VERSION=$(grep -Eo 'version *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
@@ -37,9 +36,19 @@ jobs:
             VERSION="0.0.0"
           fi
 
+          # Convert version to version_id
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          VERSION_ID=$(( MAJOR*10000 + MINOR*100 + PATCH ))
+
+          # SHA256
           SHA=$(sha256sum "$f" | cut -d' ' -f1)
+
+          # Raw file URL
           URL="https://raw.githubusercontent.com/$REPO/main/$FILEPATH"
 
+          # JSON formatting
           if [ $FIRST -eq 1 ]; then
             FIRST=0
           else
@@ -48,17 +57,16 @@ jobs:
 
           echo "    \"$FILEPATH\": {" >> manifest.json
           echo "      \"version\": \"$VERSION\"," >> manifest.json
+          echo "      \"version_id\": $VERSION_ID," >> manifest.json
           echo "      \"sha\": \"$SHA\"," >> manifest.json
           echo "      \"url\": \"$URL\"" >> manifest.json
           echo -n "    }" >> manifest.json
+
         done
 
         echo "" >> manifest.json
         echo '  }' >> manifest.json
         echo '}' >> manifest.json
-
-        echo "Manifest generated:"
-        cat manifest.json
 
     - name: Commit and push manifest.json
       uses: stefanzweifel/git-auto-commit-action@v5
