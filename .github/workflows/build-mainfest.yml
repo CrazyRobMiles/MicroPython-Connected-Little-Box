@@ -1,4 +1,4 @@
-name: Build CLB Manifest
+name: Build Firmware Manifest
 
 on:
   push:
@@ -16,25 +16,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Generate Manifest
+    - name: Generate manifest.json inside /firmware
       run: |
-        echo "Generating CLB manifest.json"
+        echo "Generating firmware/manifest.json..."
 
-        mkdir -p firmware   # ensure firmware folder exists
+        # Ensure firmware folder exists (just in case)
+        mkdir -p firmware
 
         MANIFEST="firmware/manifest.json"
-
-        echo "{" > $MANIFEST
-        echo '  "files": {' >> $MANIFEST
-
         REPO="CrazyRobMiles/MicroPython-Connected-Little-Box"
+
+        echo "{" > "$MANIFEST"
+        echo '  "files": {' >> "$MANIFEST"
+
         FIRST=1
 
-        # Scan only files inside firmware directory
+        # Scan all Python files within firmware/
         for f in $(find firmware -type f -name "*.py"); do
-          FILEPATH="${f}"
+          FILEPATH="$f"
 
-          # Extract version string
+          # Extract version (__version__ preferred)
           VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
           if [ -z "$VERSION" ]; then
             VERSION=$(grep -Eo 'version *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
@@ -43,41 +44,42 @@ jobs:
             VERSION="0.0.0"
           fi
 
-          # Compute version_id (major*10000 + minor*100 + patch)
-          MAJOR=$(echo $VERSION | cut -d. -f1)
-          MINOR=$(echo $VERSION | cut -d. -f2)
-          PATCH=$(echo $VERSION | cut -d. -f3)
+          # Flatten semantic version → version_id
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
           VERSION_ID=$(( MAJOR*10000 + MINOR*100 + PATCH ))
 
-          # Compute SHA for integrity checking
+          # Compute SHA256
           SHA=$(sha256sum "$f" | cut -d' ' -f1)
 
-          # Generate URL pointing to GitHub raw
+          # Raw GitHub URL
           URL="https://raw.githubusercontent.com/$REPO/main/$FILEPATH"
 
-          # JSON formatting
+          # Formatting for JSON
           if [ $FIRST -eq 1 ]; then
             FIRST=0
           else
-            echo ',' >> $MANIFEST
+            echo ',' >> "$MANIFEST"
           fi
 
-          echo "    \"$FILEPATH\": {" >> $MANIFEST
-          echo "      \"version\": \"$VERSION\"," >> $MANIFEST
-          echo "      \"version_id\": $VERSION_ID," >> $MANIFEST
-          echo "      \"sha\": \"$SHA\"," >> $MANIFEST
-          echo "      \"url\": \"$URL\"" >> $MANIFEST
-          echo -n "    }" >> $MANIFEST
+          echo "    \"$FILEPATH\": {" >> "$MANIFEST"
+          echo "      \"version\": \"$VERSION\"," >> "$MANIFEST"
+          echo "      \"version_id\": $VERSION_ID," >> "$MANIFEST"
+          echo "      \"sha\": \"$SHA\"," >> "$MANIFEST"
+          echo "      \"url\": \"$URL\"" >> "$MANIFEST"
+          echo -n "    }" >> "$MANIFEST"
         done
 
-        echo "" >> $MANIFEST
-        echo '  }' >> $MANIFEST
-        echo '}' >> $MANIFEST
+        echo "" >> "$MANIFEST"
+        echo "  }" >> "$MANIFEST"
+        echo "}" >> "$MANIFEST"
 
         echo "Manifest written to $MANIFEST"
+        cat "$MANIFEST"
 
     - name: Commit and push manifest.json
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        commit_message: "Auto-generated manifest.json"
-        file_pattern: "manifest.json"
+        commit_message: "Auto-generated firmware manifest.json"
+        file_pattern: "firmware/manifest.json"
