@@ -110,7 +110,7 @@ class Manager(CLBManager):
     def get_interface(self):
         return {
             "on": ("Enable pixel animation", self.command_enable),
-            "off": ("Disable pixel animation", self.command_disable),
+            "stop": ("Stop pixel animation", self.command_stop),
             "test": ("Show test pattern: test", self.command_test),
             "raw_test": ("Show raw pixel: raw_test", self.command_raw_test),
             "fill": ("Fil with colour: fill <r> <g> <b>", self.command_fill_display),
@@ -126,9 +126,9 @@ class Manager(CLBManager):
         self.set_status(4010, "Pixels manually enabled")
         self.setup(self.settings)
 
-    def command_disable(self):
-        self.enabled = False
-        self.set_status(4011, "Pixels manually disabled")
+    def command_stop(self):
+        self.animation = "None"
+        self.set_status(4011, "Pixels animation stopped")
         self.state = self.STATE_DISABLED
 
     def command_test(self):

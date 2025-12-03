@@ -18,14 +18,21 @@ jobs:
 
     - name: Generate Manifest
       run: |
-        echo "{" > manifest.json
-        echo '  "files": {' >> manifest.json
+        echo "Generating CLB manifest.json"
+
+        mkdir -p firmware   # ensure firmware folder exists
+
+        MANIFEST="firmware/manifest.json"
+
+        echo "{" > $MANIFEST
+        echo '  "files": {' >> $MANIFEST
 
         REPO="CrazyRobMiles/MicroPython-Connected-Little-Box"
         FIRST=1
 
-        for f in $(find . -type f -name "*.py" ! -path "./.github/*"); do
-          FILEPATH=${f#./}
+        # Scan only files inside firmware directory
+        for f in $(find firmware -type f -name "*.py"); do
+          FILEPATH="${f}"
 
           # Extract version string
           VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
@@ -36,37 +43,38 @@ jobs:
             VERSION="0.0.0"
           fi
 
-          # Convert version to version_id
+          # Compute version_id (major*10000 + minor*100 + patch)
           MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
           PATCH=$(echo $VERSION | cut -d. -f3)
           VERSION_ID=$(( MAJOR*10000 + MINOR*100 + PATCH ))
 
-          # SHA256
+          # Compute SHA for integrity checking
           SHA=$(sha256sum "$f" | cut -d' ' -f1)
 
-          # Raw file URL
+          # Generate URL pointing to GitHub raw
           URL="https://raw.githubusercontent.com/$REPO/main/$FILEPATH"
 
           # JSON formatting
           if [ $FIRST -eq 1 ]; then
             FIRST=0
           else
-            echo ',' >> manifest.json
+            echo ',' >> $MANIFEST
           fi
 
-          echo "    \"$FILEPATH\": {" >> manifest.json
-          echo "      \"version\": \"$VERSION\"," >> manifest.json
-          echo "      \"version_id\": $VERSION_ID," >> manifest.json
-          echo "      \"sha\": \"$SHA\"," >> manifest.json
-          echo "      \"url\": \"$URL\"" >> manifest.json
-          echo -n "    }" >> manifest.json
-
+          echo "    \"$FILEPATH\": {" >> $MANIFEST
+          echo "      \"version\": \"$VERSION\"," >> $MANIFEST
+          echo "      \"version_id\": $VERSION_ID," >> $MANIFEST
+          echo "      \"sha\": \"$SHA\"," >> $MANIFEST
+          echo "      \"url\": \"$URL\"" >> $MANIFEST
+          echo -n "    }" >> $MANIFEST
         done
 
-        echo "" >> manifest.json
-        echo '  }' >> manifest.json
-        echo '}' >> manifest.json
+        echo "" >> $MANIFEST
+        echo '  }' >> $MANIFEST
+        echo '}' >> $MANIFEST
+
+        echo "Manifest written to $MANIFEST"
 
     - name: Commit and push manifest.json
       uses: stefanzweifel/git-auto-commit-action@v5
