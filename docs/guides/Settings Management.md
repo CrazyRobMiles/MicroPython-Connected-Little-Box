@@ -1,303 +1,246 @@
-# 🧩 Connected Little Box – Settings Management  
-### How Settings Are Loaded, Stored, Updated, and Used
+# 🧩 Connected Little Box – Settings Management
+### How Settings Are Loaded, Stored, Updated, Notified, and Used
 
-The Connected Little Box (CLB) framework provides a unified mechanism for storing configuration values for each manager, loading them on startup, and updating them dynamically during runtime.  
-This document explains the full lifecycle of settings, from defaults to persistent storage.
+The Connected Little Box (CLB) framework implements a flexible and extensible settings system used by every manager. Settings are defined by managers, merged with persisted values, exposed in the console, and stored in `settings.json`. Managers can also be notified when a setting changes.
+
+This document describes the **current behaviour** of the settings subsystem, including:
+
+- Dotted-path and indexed-path setting updates  
+- Automatic persistence via DeviceConfigurator  
+- Manager notifications via `on_setting_changed()`  
+- Load-time enable/disable logic  
+- Nested settings structures  
+- Console update rules  
 
 ---
 
 # 📜 Overview
 
-Each **manager** in CLB:
+Each CLB **manager**:
 
-- Defines **default settings**
-- Receives **stored settings** from persistent storage
-- Applies and merges these settings during `setup()`
-- Exposes settings through the CLB console command system  
-- May request **saving** of settings to `/settings.json`
-- Can safely detect if it is **enabled** or **disabled** via settings
+- Declares its own default settings  
+- Receives persisted settings merged with its defaults  
+- Can be enabled/disabled via its `"enabled"` flag  
+- May define nested structures (lists or dictionaries)  
+- Is able to react dynamically to live setting changes  
+- Persists runtime changes to disk via the Configurator  
 
-This system is central to the configuration of:
-
-- Network setup  
-- Pixel panel configuration  
-- Stepper/servo behaviour  
-- Display modes  
-- Script manager behaviour  
-- Wordsearch/Clock configuration  
-- And user-defined managers  
+Settings are stored per-manager under its name in the central `settings.json` file.
 
 ---
 
-# 🗂️ Settings File Format
+# 🗂️ 1. Settings File Format (`settings.json`)
 
-Settings are stored in:
-
-```
-/settings.json
-```
-
-This file contains a **top-level dictionary**, where each key is a manager name:
+Settings are stored as:
 
 ```json
 {
     "wifi": {
         "enabled": true,
-        "ssid": "MyNetwork",
-        "password": "secret"
+        "wifissid1": "MyNetwork",
+        "wifipwd1": "secret"
     },
-    "mqtt": {
+    "stepper": {
         "enabled": false,
-        "mqtthost": "",
-        "mqttport": 1883
-    },
-    "pixel": {
-        "enabled": true,
-        "panel_width": 8,
-        "panel_height": 8
+        "motors": [
+            { "pins": [2,3,4,5], "wheel_diameter_mm": 69.0 },
+            { "pins": [6,7,8,9], "wheel_diameter_mm": 69.0 }
+        ]
     }
 }
 ```
 
-Each manager controls **only its own section**.
+Each manager owns **only its own subtree**.
 
 ---
 
-# 📥 1. How Managers Declare Default Settings
+# 🧰 2. Declaring Default Settings (Manager Side)
 
-Every manager calls the `CLBManager` constructor with a `defaults` dictionary:
+Defaults are defined in each manager’s `__init__`:
 
 ```python
 class Manager(CLBManager):
     def __init__(self, clb):
         super().__init__(clb, defaults={
             "enabled": True,
-            "pin": "LED",
-            "delay_seconds": 1.0
+            "panel_width": 8,
+            "panel_height": 8
         })
 ```
 
-The base class ensures:
+Defaults:
 
-- Every manager **always has** an `"enabled"` flag  
-- Other defaults fill in missing values  
-- Users can override these defaults in `settings.json`
-
-Default settings are stored internally until merged.
+- Provide safe initial values  
+- Fill in any missing settings during a firmware upgrade  
+- Are merged with persisted settings at startup  
 
 ---
 
-# 🔀 2. How Settings Are Loaded on Startup
+# 🔀 3. Startup Settings Merge
 
-During system startup:
+During startup (`clb.setup()`):
 
-1. CLB scans `/managers`  
-2. Creates **one manager instance** per file  
-3. Loads `/settings.json`  
-4. For each manager:
+1. The CLB scans `/managers` for `*_manager.py`  
+2. It loads only those managers where `"enabled": true`  
+3. It merges persisted settings into each manager's defaults:
 
 ```python
 merged = defaults.copy()
 merged.update(stored_settings)
 ```
 
-This means:
+Result:
 
-### ✔ Stored settings *override* defaults  
-### ✔ Defaults fill in any missing values  
-### ✔ New defaults automatically appear after an update  
-
-The merged result is placed in:
-
-```
-manager.settings
-```
+- Persisted values override defaults  
+- All missing fields receive defaults  
+- Managers always see a complete `settings` structure  
 
 ---
 
-# ⚙️ 3. How a Manager Receives Its Settings
+# 🚦 4. Manager Enable/Disable Behaviour
 
-In each manager, `setup()` is passed its merged settings dictionary:
+The `"enabled"` setting does more than control behaviour — it decides whether a manager even **exists**.
 
-```python
-def setup(self, settings):
-    super().setup(settings)
-
-    if not self.enabled:
-        self.state = self.STATE_DISABLED
-        return
-
-    pin = settings["pin"]
-    delay = settings["delay_seconds"]
-```
-
-The base `setup()` performs:
-
-- Merge of defaults with stored settings  
-- Creation of `self.settings`  
-- Creation of `self.enabled`  
-- Setting initial manager state to “connecting” or “disabled”
-
-A manager should *not* modify global settings inside `setup()`—only read them.
-
----
-
-# 🔁 4. Changing Settings at Runtime
-
-Users can change settings through the CLB console:
-
-```
-set pixel_panel_width=16
-set wifi_enabled=false
-```
-
-The format is:
-
-```
-set <manager>_<setting>=<value>
-```
-
-CLB performs:
-
-1. Parse manager name  
-2. Parse setting name  
-3. Coerce the value to the correct type  
-4. Update `self.settings`  
-5. Print confirmation
-
-Example:
-
-```
-pixel.panel_width updated to 16 (int)
-```
-
-This **does not automatically save to disk** — the user must call:
-
-```
-save
-```
-
-(if you add a save command) or rely on the DeviceConfigurator.
-
----
-
-# 💾 5. Persistent Saving of Settings
-
-Settings persistence is handled by:
-
-### ✔ `device_configurator.py`  
-### ✔ Saving `/settings.json` in JSON format  
-### (Optional) Obfuscated storage using XOR and a device-unique seed
-
-Managers **never write settings themselves**.  
-Instead, CLB or external tools call:
-
-```python
-configurator.save()
-```
-
-The DeviceConfigurator writes:
+If a manager's setting contains:
 
 ```json
-{
-    "pixel": {...},
-    "wifi": {...},
-    "wordsearch": {...},
-    ...
-}
+{ "enabled": false }
 ```
 
-This ensures consistency across reboots.
+Then:
+
+- The manager is **not imported**
+- No instance is created
+- It receives **no updates**
+- It cannot receive setting change notifications
+
+This behaviour prevents loading hardware-dependent managers that would otherwise crash on setup.
 
 ---
 
-# 🔐 6. Safe Mode (SAFE_PIN)
+# 🧵 5. Nested Settings and Dotted-Path Access
 
-The DeviceConfigurator can enforce “setup mode” if:
+Settings may be arbitrarily nested:
 
-- The settings file is missing  
-- The safe pin is pulled low  
-- Loading settings fails  
-- Obfuscation headers do not match  
+- `wifi.ssid`
+- `pixel.panel_width`
+- `stepper.motors[0].wheel_diameter_mm`
+- `stepper.motors[1].pins[2]`
 
-In this mode, the device waits on USB for new settings to be sent.
+The CLB `set` command now uses **dotted-path syntax**:
 
-This is primarily used for first-time configuration.
+```
+set stepper.motors[0].wheel_diameter_mm=69.1
+```
 
----
+The path parser supports:
 
-# 🚀 7. When Settings Affect Manager Startup
+- Dictionary keys  
+- List indexing via `[index]`  
+- Mixed structures  
+- Arbitrary depth  
 
-Every manager should:
-
-1. Check `self.enabled` in `setup()`  
-2. Set appropriate internal states  
-3. Reflect failures by setting `self.state = STATE_ERROR`  
-4. Set `self.state = STATE_OK` only when successfully configured  
-
-This allows dependency-based managers (e.g., MQTT depends on WiFi) to wait until prerequisite managers are ready.
+Invalid paths (e.g., accessing list elements using dotted syntax) correctly generate error messages.
 
 ---
 
-# 🔧 8. Example: Pixel Manager Settings Flow
+# ⚙️ 6. Changing Settings at Runtime
 
-### Defined defaults:
+Settings may be changed dynamically using:
+
+```
+set <manager>.<path>=<value>
+```
+
+Examples:
+
+```
+set pixel.panel_width=16
+set wifi.wifissid1="NewNetwork"
+set stepper.motors[0].wheel_diameter_mm=70.2
+set stepper.motors[1].pins[2]=15
+```
+
+The value is type-coerced according to the original data:
+
+- Ints stay ints  
+- Floats stay floats  
+- Boolean text becomes bool  
+- JSON becomes native structures  
+- Strings remain strings unless automatically coerced  
+
+After a change:
+
+1. The setting is written into memory  
+2. The configuration file is saved immediately  
+3. If the manager is enabled, it receives:
 
 ```python
-{
-    "pixelpin": 0,
-    "panel_width": 8,
-    "panel_height": 8,
-    "x_panels": 3,
-    "y_panels": 2,
-    "brightness": 1.0
-}
+on_setting_changed(path, old_value, new_value)
 ```
 
-### Stored settings:
+---
 
-```json
-{
-    "panel_width": 16,
-    "x_panels": 2
-}
+# 🛎️ 7. Manager Notification: `on_setting_changed()`
+
+A manager may define:
+
+```python
+def on_setting_changed(self, path, old, new):
+    print("Setting changed:", path, old, "→", new)
 ```
 
-### Final merged settings:
+This allows:
 
-```json
-{
-    "enabled": true,
-    "pixelpin": 0,
-    "panel_width": 16,
-    "panel_height": 8,
-    "x_panels": 2,
-    "y_panels": 2,
-    "brightness": 1.0
-}
+- Reconfiguration of hardware  
+- Rebuilding lookup tables  
+- Updating cached derived settings  
+- Triggering recalculations  
+
+Notifications include:
+
+- `path`: dotted path string (`"motors[0].wheel_diameter_mm"`)
+- `old`: previous value  
+- `new`: updated value  
+
+Managers **only** receive this callback if:
+
+- They are currently enabled  
+- They were instantiated at boot  
+- The setting belongs to them  
+- The path resolves correctly  
+
+---
+
+# 💾 8. Persistent Saving of Settings
+
+After each successful `set` command:
+
+```python
+self.config.save()
 ```
 
-The manager then configures the NeoPixel panel accordingly.
+writes the full updated settings tree back to `/settings.json`.
+
+This ensures:
+
+- Power-cycle-safe configuration  
+- Manager defaults are not lost  
+- Remote-control via MQTT or USB terminal persists changes  
 
 ---
 
 # 🧪 9. Resetting Settings to Defaults
 
-CLB provides a built-in command:
+The built-in command:
 
 ```
 reset
 ```
 
-This rewrites the settings file with:
+Overwrites the file with the defaults **for all loaded managers**.
 
-```python
-mgr.get_defaults()
-```
-
-For every manager.
-
-This is useful when settings have become corrupted or incompatible.
+Managers that are disabled do not appear in the reset output.
 
 ---
 
@@ -305,22 +248,20 @@ This is useful when settings have become corrupted or incompatible.
 
 | Stage | Description |
 |-------|-------------|
-| **Defaults** | Each manager declares safe starting values |
-| **Load** | CLB loads `/settings.json` and merges with defaults |
-| **Setup** | Managers receive configured settings in `setup()` |
-| **Runtime Updates** | Users change settings using the `set` command |
-| **Persistence** | Settings saved via DeviceConfigurator |
-| **Safe Mode** | Ensures device recoverability |
-| **Dependency-aware** | Managers set `STATE_OK` when fully configured |
+| **Defaults** | Manager declares safe defaults in constructor |
+| **Load** | CLB loads `settings.json` and merges with defaults |
+| **Enable/Disable** | `"enabled": false` prevents the manager from being instantiated |
+| **Setup** | Manager receives its final merged settings during setup |
+| **Runtime Updates** | Users update values using dotted paths |
+| **Notification** | `on_setting_changed()` is called for live updates |
+| **Persistence** | The DeviceConfigurator saves updates immediately |
+| **Nested Support** | Arbitrary nesting and list indices are supported |
 
-This system allows CLB devices to be:
+The CLB settings system is now:
 
-- Self-configuring  
-- Robust across firmware updates  
-- Easy to debug  
-- Easy to remotely manage  
-- Modular and extensible  
+- Robust  
+- Extensible  
+- Capable of handling nested structures  
+- Safe across updates  
+- Friendly to both console and remote MQTT configuration  
 
----
-
-If you'd like a **PDF version**, **Quick Start card**, or **screenshots edition**, just ask!

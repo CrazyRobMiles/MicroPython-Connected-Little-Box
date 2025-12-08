@@ -1,0 +1,2281 @@
+{
+  "name": "Family Noticeboard",
+  "version": 1,
+  "grid": {
+    "rows": 16,
+    "cols": 16,
+    "letters": [
+      "HHOTHREEASTCOSGM",
+      "ATFHOWSNOWFGHNOI",
+      "LWFIVEIDRYOTIICL",
+      "FOLRFSXEGFUNCOLD",
+      "IVITFTTOMORROWOL",
+      "FLNYLRENSATENGCS",
+      "TIEIAOEEWAEENNKT",
+      "YGAUTNNENFEIEIHO",
+      "YHQCEGQGZTNECNER",
+      "WTNLRAINNETITEAM",
+      "SINORTHEVRWGETVB",
+      "USNUWWVEINEHDEYF",
+      "NELDEEAHCONTZERO",
+      "NTHISLTRYOTEKNER",
+      "YUELEVENMNYEPAST",
+      "QPKALERTMORNINGY"
+    ]
+  },
+  "categories": {
+    "names": [],
+    "activities": [],
+    "linking": [],
+    "extras": []
+  },
+  "builtin_categories": {
+    "clock": [
+      "ONE",
+      "TWO",
+      "THREE",
+      "FOUR",
+      "FIVE",
+      "SIX",
+      "SEVEN",
+      "EIGHT",
+      "NINE",
+      "TEN",
+      "ELEVEN",
+      "TWELVE",
+      "THIRTEEN",
+      "FOURTEEN",
+      "FIFTEEN",
+      "SIXTEEN",
+      "SEVENTEEN",
+      "EIGHTEEN",
+      "NINETEEN",
+      "TWENTY",
+      "THIRTY",
+      "FORTY",
+      "FIFTY",
+      "QUARTER",
+      "HALF",
+      "PAST",
+      "TO",
+      "OCLOCK",
+      "ZERO",
+      "OH",
+      "CONNECTED",
+      "OFFLINE",
+      "SETUP"
+    ],
+    "weather": [
+      "SUN",
+      "SUNNY",
+      "RAIN",
+      "WET",
+      "DRY",
+      "SNOW",
+      "ICY",
+      "HAIL",
+      "WIND",
+      "CLOUD",
+      "STORM",
+      "FOG",
+      "COLD",
+      "WARM",
+      "HOT",
+      "FREEZE",
+      "MILD",
+      "CHILL",
+      "MORNING",
+      "AFTERNOON",
+      "EVENING",
+      "TOMORROW",
+      "NOW",
+      "LATER",
+      "THIS",
+      "LIGHT",
+      "HEAVY",
+      "STRONG",
+      "NORTH",
+      "SOUTH",
+      "EAST",
+      "WEST",
+      "ALERT",
+      "WARNING"
+    ]
+  },
+  "enabled_categories": {
+    "clock": true,
+    "weather": true,
+    "names": true,
+    "activities": true,
+    "linking": true,
+    "extras": true
+  },
+  "allow_backwards": false,
+  "allow_diagonals": true,
+  "words": [
+    {
+      "word": "SEVENTEEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 4
+        },
+        {
+          "row": 12,
+          "col": 5
+        },
+        {
+          "row": 11,
+          "col": 6
+        },
+        {
+          "row": 10,
+          "col": 7
+        },
+        {
+          "row": 9,
+          "col": 8
+        },
+        {
+          "row": 8,
+          "col": 9
+        },
+        {
+          "row": 7,
+          "col": 10
+        },
+        {
+          "row": 6,
+          "col": 11
+        },
+        {
+          "row": 5,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "CONNECTED",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 3,
+          "col": 12
+        },
+        {
+          "row": 4,
+          "col": 12
+        },
+        {
+          "row": 5,
+          "col": 12
+        },
+        {
+          "row": 6,
+          "col": 12
+        },
+        {
+          "row": 7,
+          "col": 12
+        },
+        {
+          "row": 8,
+          "col": 12
+        },
+        {
+          "row": 9,
+          "col": 12
+        },
+        {
+          "row": 10,
+          "col": 12
+        },
+        {
+          "row": 11,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "AFTERNOON",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 6,
+          "col": 9
+        },
+        {
+          "row": 7,
+          "col": 9
+        },
+        {
+          "row": 8,
+          "col": 9
+        },
+        {
+          "row": 9,
+          "col": 9
+        },
+        {
+          "row": 10,
+          "col": 9
+        },
+        {
+          "row": 11,
+          "col": 9
+        },
+        {
+          "row": 12,
+          "col": 9
+        },
+        {
+          "row": 13,
+          "col": 9
+        },
+        {
+          "row": 14,
+          "col": 9
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "THIRTEEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 6
+        },
+        {
+          "row": 12,
+          "col": 7
+        },
+        {
+          "row": 11,
+          "col": 8
+        },
+        {
+          "row": 10,
+          "col": 9
+        },
+        {
+          "row": 9,
+          "col": 10
+        },
+        {
+          "row": 8,
+          "col": 11
+        },
+        {
+          "row": 7,
+          "col": 12
+        },
+        {
+          "row": 6,
+          "col": 13
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "EIGHTEEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 8,
+          "col": 11
+        },
+        {
+          "row": 9,
+          "col": 11
+        },
+        {
+          "row": 10,
+          "col": 11
+        },
+        {
+          "row": 11,
+          "col": 11
+        },
+        {
+          "row": 12,
+          "col": 11
+        },
+        {
+          "row": 13,
+          "col": 11
+        },
+        {
+          "row": 14,
+          "col": 11
+        },
+        {
+          "row": 15,
+          "col": 11
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "NINETEEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 6,
+          "col": 13
+        },
+        {
+          "row": 7,
+          "col": 13
+        },
+        {
+          "row": 8,
+          "col": 13
+        },
+        {
+          "row": 9,
+          "col": 13
+        },
+        {
+          "row": 10,
+          "col": 13
+        },
+        {
+          "row": 11,
+          "col": 13
+        },
+        {
+          "row": 12,
+          "col": 13
+        },
+        {
+          "row": 13,
+          "col": 13
+        }
+      ],
+      "color": [
+        170,
+        170,
+        170
+      ]
+    },
+    {
+      "word": "TOMORROW",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 4,
+          "col": 6
+        },
+        {
+          "row": 4,
+          "col": 7
+        },
+        {
+          "row": 4,
+          "col": 8
+        },
+        {
+          "row": 4,
+          "col": 9
+        },
+        {
+          "row": 4,
+          "col": 10
+        },
+        {
+          "row": 4,
+          "col": 11
+        },
+        {
+          "row": 4,
+          "col": 12
+        },
+        {
+          "row": 4,
+          "col": 13
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "FOURTEEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 10
+        },
+        {
+          "row": 2,
+          "col": 10
+        },
+        {
+          "row": 3,
+          "col": 10
+        },
+        {
+          "row": 4,
+          "col": 10
+        },
+        {
+          "row": 5,
+          "col": 10
+        },
+        {
+          "row": 6,
+          "col": 10
+        },
+        {
+          "row": 7,
+          "col": 10
+        },
+        {
+          "row": 8,
+          "col": 10
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "SIXTEEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row": 2,
+          "col": 6
+        },
+        {
+          "row": 3,
+          "col": 6
+        },
+        {
+          "row": 4,
+          "col": 6
+        },
+        {
+          "row": 5,
+          "col": 6
+        },
+        {
+          "row": 6,
+          "col": 6
+        },
+        {
+          "row": 7,
+          "col": 6
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "WARNING",
+      "category": "weather",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 6,
+          "col": 8
+        },
+        {
+          "row": 5,
+          "col": 9
+        },
+        {
+          "row": 4,
+          "col": 10
+        },
+        {
+          "row": 3,
+          "col": 11
+        },
+        {
+          "row": 2,
+          "col": 12
+        },
+        {
+          "row": 1,
+          "col": 13
+        },
+        {
+          "row": 0,
+          "col": 14
+        }
+      ],
+      "color": [
+        255,
+        0,
+        170
+      ]
+    },
+    {
+      "word": "EVENING",
+      "category": "weather",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 11,
+          "col": 7
+        },
+        {
+          "row": 10,
+          "col": 8
+        },
+        {
+          "row": 9,
+          "col": 9
+        },
+        {
+          "row": 8,
+          "col": 10
+        },
+        {
+          "row": 7,
+          "col": 11
+        },
+        {
+          "row": 6,
+          "col": 12
+        },
+        {
+          "row": 5,
+          "col": 13
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "QUARTER",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 8,
+          "col": 2
+        },
+        {
+          "row": 7,
+          "col": 3
+        },
+        {
+          "row": 6,
+          "col": 4
+        },
+        {
+          "row": 5,
+          "col": 5
+        },
+        {
+          "row": 4,
+          "col": 6
+        },
+        {
+          "row": 3,
+          "col": 7
+        },
+        {
+          "row": 2,
+          "col": 8
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "FIFTEEN",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row": 2,
+          "col": 3
+        },
+        {
+          "row": 3,
+          "col": 4
+        },
+        {
+          "row": 4,
+          "col": 5
+        },
+        {
+          "row": 5,
+          "col": 6
+        },
+        {
+          "row": 6,
+          "col": 7
+        },
+        {
+          "row": 7,
+          "col": 8
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "MORNING",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 15,
+          "col": 8
+        },
+        {
+          "row": 15,
+          "col": 9
+        },
+        {
+          "row": 15,
+          "col": 10
+        },
+        {
+          "row": 15,
+          "col": 11
+        },
+        {
+          "row": 15,
+          "col": 12
+        },
+        {
+          "row": 15,
+          "col": 13
+        },
+        {
+          "row": 15,
+          "col": 14
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "OFFLINE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row": 2,
+          "col": 2
+        },
+        {
+          "row": 3,
+          "col": 2
+        },
+        {
+          "row": 4,
+          "col": 2
+        },
+        {
+          "row": 5,
+          "col": 2
+        },
+        {
+          "row": 6,
+          "col": 2
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "TWENTY",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 9,
+          "col": 10
+        },
+        {
+          "row": 10,
+          "col": 10
+        },
+        {
+          "row": 11,
+          "col": 10
+        },
+        {
+          "row": 12,
+          "col": 10
+        },
+        {
+          "row": 13,
+          "col": 10
+        },
+        {
+          "row": 14,
+          "col": 10
+        }
+      ],
+      "color": [
+        255,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "FREEZE",
+      "category": "weather",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 4,
+          "col": 4
+        },
+        {
+          "row": 5,
+          "col": 5
+        },
+        {
+          "row": 6,
+          "col": 6
+        },
+        {
+          "row": 7,
+          "col": 7
+        },
+        {
+          "row": 8,
+          "col": 8
+        },
+        {
+          "row": 9,
+          "col": 9
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "TWELVE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 10,
+          "col": 5
+        },
+        {
+          "row": 11,
+          "col": 5
+        },
+        {
+          "row": 12,
+          "col": 5
+        },
+        {
+          "row": 13,
+          "col": 5
+        },
+        {
+          "row": 14,
+          "col": 5
+        },
+        {
+          "row": 15,
+          "col": 5
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "THIRTY",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 1,
+          "col": 3
+        },
+        {
+          "row": 2,
+          "col": 3
+        },
+        {
+          "row": 3,
+          "col": 3
+        },
+        {
+          "row": 4,
+          "col": 3
+        },
+        {
+          "row": 5,
+          "col": 3
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "ELEVEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 14,
+          "col": 2
+        },
+        {
+          "row": 14,
+          "col": 3
+        },
+        {
+          "row": 14,
+          "col": 4
+        },
+        {
+          "row": 14,
+          "col": 5
+        },
+        {
+          "row": 14,
+          "col": 6
+        },
+        {
+          "row": 14,
+          "col": 7
+        }
+      ],
+      "color": [
+        170,
+        0,
+        255
+      ]
+    },
+    {
+      "word": "OCLOCK",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 14
+        },
+        {
+          "row": 2,
+          "col": 14
+        },
+        {
+          "row": 3,
+          "col": 14
+        },
+        {
+          "row": 4,
+          "col": 14
+        },
+        {
+          "row": 5,
+          "col": 14
+        },
+        {
+          "row": 6,
+          "col": 14
+        }
+      ],
+      "color": [
+        255,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "STRONG",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 3,
+          "col": 5
+        },
+        {
+          "row": 4,
+          "col": 5
+        },
+        {
+          "row": 5,
+          "col": 5
+        },
+        {
+          "row": 6,
+          "col": 5
+        },
+        {
+          "row": 7,
+          "col": 5
+        },
+        {
+          "row": 8,
+          "col": 5
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "EIGHT",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 8,
+          "col": 11
+        },
+        {
+          "row": 9,
+          "col": 11
+        },
+        {
+          "row": 10,
+          "col": 11
+        },
+        {
+          "row": 11,
+          "col": 11
+        },
+        {
+          "row": 12,
+          "col": 11
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "NORTH",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 10,
+          "col": 2
+        },
+        {
+          "row": 10,
+          "col": 3
+        },
+        {
+          "row": 10,
+          "col": 4
+        },
+        {
+          "row": 10,
+          "col": 5
+        },
+        {
+          "row": 10,
+          "col": 6
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "ALERT",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 15,
+          "col": 3
+        },
+        {
+          "row": 15,
+          "col": 4
+        },
+        {
+          "row": 15,
+          "col": 5
+        },
+        {
+          "row": 15,
+          "col": 6
+        },
+        {
+          "row": 15,
+          "col": 7
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "LATER",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 5,
+          "col": 4
+        },
+        {
+          "row": 6,
+          "col": 4
+        },
+        {
+          "row": 7,
+          "col": 4
+        },
+        {
+          "row": 8,
+          "col": 4
+        },
+        {
+          "row": 9,
+          "col": 4
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "SEVEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 4
+        },
+        {
+          "row": 12,
+          "col": 5
+        },
+        {
+          "row": 11,
+          "col": 6
+        },
+        {
+          "row": 10,
+          "col": 7
+        },
+        {
+          "row": 9,
+          "col": 8
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "CLOUD",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 8,
+          "col": 3
+        },
+        {
+          "row": 9,
+          "col": 3
+        },
+        {
+          "row": 10,
+          "col": 3
+        },
+        {
+          "row": 11,
+          "col": 3
+        },
+        {
+          "row": 12,
+          "col": 3
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "LIGHT",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 5,
+          "col": 1
+        },
+        {
+          "row": 6,
+          "col": 1
+        },
+        {
+          "row": 7,
+          "col": 1
+        },
+        {
+          "row": 8,
+          "col": 1
+        },
+        {
+          "row": 9,
+          "col": 1
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "HEAVY",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 7,
+          "col": 14
+        },
+        {
+          "row": 8,
+          "col": 14
+        },
+        {
+          "row": 9,
+          "col": 14
+        },
+        {
+          "row": 10,
+          "col": 14
+        },
+        {
+          "row": 11,
+          "col": 14
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "SOUTH",
+      "category": "weather",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 5,
+          "col": 8
+        },
+        {
+          "row": 4,
+          "col": 9
+        },
+        {
+          "row": 3,
+          "col": 10
+        },
+        {
+          "row": 2,
+          "col": 11
+        },
+        {
+          "row": 1,
+          "col": 12
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "CHILL",
+      "category": "weather",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 0,
+          "col": 11
+        },
+        {
+          "row": 1,
+          "col": 12
+        },
+        {
+          "row": 2,
+          "col": 13
+        },
+        {
+          "row": 3,
+          "col": 14
+        },
+        {
+          "row": 4,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "FIFTY",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 3,
+          "col": 0
+        },
+        {
+          "row": 4,
+          "col": 0
+        },
+        {
+          "row": 5,
+          "col": 0
+        },
+        {
+          "row": 6,
+          "col": 0
+        },
+        {
+          "row": 7,
+          "col": 0
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "THREE",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "STORM",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 5,
+          "col": 15
+        },
+        {
+          "row": 6,
+          "col": 15
+        },
+        {
+          "row": 7,
+          "col": 15
+        },
+        {
+          "row": 8,
+          "col": 15
+        },
+        {
+          "row": 9,
+          "col": 15
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "FORTY",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 11,
+          "col": 15
+        },
+        {
+          "row": 12,
+          "col": 15
+        },
+        {
+          "row": 13,
+          "col": 15
+        },
+        {
+          "row": 14,
+          "col": 15
+        },
+        {
+          "row": 15,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "SUNNY",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 10,
+          "col": 0
+        },
+        {
+          "row": 11,
+          "col": 0
+        },
+        {
+          "row": 12,
+          "col": 0
+        },
+        {
+          "row": 13,
+          "col": 0
+        },
+        {
+          "row": 14,
+          "col": 0
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "SETUP",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 11,
+          "col": 1
+        },
+        {
+          "row": 12,
+          "col": 1
+        },
+        {
+          "row": 13,
+          "col": 1
+        },
+        {
+          "row": 14,
+          "col": 1
+        },
+        {
+          "row": 15,
+          "col": 1
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "FOUR",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 10
+        },
+        {
+          "row": 2,
+          "col": 10
+        },
+        {
+          "row": 3,
+          "col": 10
+        },
+        {
+          "row": 4,
+          "col": 10
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "ZERO",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 12,
+          "col": 12
+        },
+        {
+          "row": 12,
+          "col": 13
+        },
+        {
+          "row": 12,
+          "col": 14
+        },
+        {
+          "row": 12,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "WARM",
+      "category": "weather",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 11,
+          "col": 5
+        },
+        {
+          "row": 12,
+          "col": 6
+        },
+        {
+          "row": 13,
+          "col": 7
+        },
+        {
+          "row": 14,
+          "col": 8
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "WIND",
+      "category": "weather",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 9,
+          "col": 0
+        },
+        {
+          "row": 10,
+          "col": 1
+        },
+        {
+          "row": 11,
+          "col": 2
+        },
+        {
+          "row": 12,
+          "col": 3
+        }
+      ],
+      "color": [
+        170,
+        170,
+        170
+      ]
+    },
+    {
+      "word": "THIS",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 13,
+          "col": 1
+        },
+        {
+          "row": 13,
+          "col": 2
+        },
+        {
+          "row": 13,
+          "col": 3
+        },
+        {
+          "row": 13,
+          "col": 4
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "HAIL",
+      "category": "weather",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 8,
+          "col": 1
+        },
+        {
+          "row": 7,
+          "col": 2
+        },
+        {
+          "row": 6,
+          "col": 3
+        },
+        {
+          "row": 5,
+          "col": 4
+        }
+      ],
+      "color": [
+        170,
+        0,
+        255
+      ]
+    },
+    {
+      "word": "SNOW",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row": 1,
+          "col": 8
+        },
+        {
+          "row": 1,
+          "col": 9
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "RAIN",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 9,
+          "col": 4
+        },
+        {
+          "row": 9,
+          "col": 5
+        },
+        {
+          "row": 9,
+          "col": 6
+        },
+        {
+          "row": 9,
+          "col": 7
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "FIVE",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 2,
+          "col": 2
+        },
+        {
+          "row": 2,
+          "col": 3
+        },
+        {
+          "row": 2,
+          "col": 4
+        },
+        {
+          "row": 2,
+          "col": 5
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "WEST",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 5
+        },
+        {
+          "row": 2,
+          "col": 5
+        },
+        {
+          "row": 3,
+          "col": 5
+        },
+        {
+          "row": 4,
+          "col": 5
+        }
+      ],
+      "color": [
+        170,
+        170,
+        170
+      ]
+    },
+    {
+      "word": "HALF",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row": 2,
+          "col": 0
+        },
+        {
+          "row": 3,
+          "col": 0
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "COLD",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 3,
+          "col": 12
+        },
+        {
+          "row": 3,
+          "col": 13
+        },
+        {
+          "row": 3,
+          "col": 14
+        },
+        {
+          "row": 3,
+          "col": 15
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "PAST",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 14,
+          "col": 12
+        },
+        {
+          "row": 14,
+          "col": 13
+        },
+        {
+          "row": 14,
+          "col": 14
+        },
+        {
+          "row": 14,
+          "col": 15
+        }
+      ],
+      "color": [
+        255,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "NINE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 6,
+          "col": 13
+        },
+        {
+          "row": 7,
+          "col": 13
+        },
+        {
+          "row": 8,
+          "col": 13
+        },
+        {
+          "row": 9,
+          "col": 13
+        }
+      ],
+      "color": [
+        255,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "MILD",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 15
+        },
+        {
+          "row": 1,
+          "col": 15
+        },
+        {
+          "row": 2,
+          "col": 15
+        },
+        {
+          "row": 3,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "EAST",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 7
+        },
+        {
+          "row": 0,
+          "col": 8
+        },
+        {
+          "row": 0,
+          "col": 9
+        },
+        {
+          "row": 0,
+          "col": 10
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "DRY",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 2,
+          "col": 7
+        },
+        {
+          "row": 2,
+          "col": 8
+        },
+        {
+          "row": 2,
+          "col": 9
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "FOG",
+      "category": "weather",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 3,
+          "col": 9
+        },
+        {
+          "row": 2,
+          "col": 10
+        },
+        {
+          "row": 1,
+          "col": 11
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "ONE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 4,
+          "col": 7
+        },
+        {
+          "row": 5,
+          "col": 7
+        },
+        {
+          "row": 6,
+          "col": 7
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "HOT",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        }
+      ],
+      "color": [
+        255,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "SIX",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row": 2,
+          "col": 6
+        },
+        {
+          "row": 3,
+          "col": 6
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "WET",
+      "category": "weather",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 11,
+          "col": 4
+        },
+        {
+          "row": 12,
+          "col": 5
+        },
+        {
+          "row": 13,
+          "col": 6
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "SUN",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 10,
+          "col": 0
+        },
+        {
+          "row": 11,
+          "col": 0
+        },
+        {
+          "row": 12,
+          "col": 0
+        }
+      ],
+      "color": [
+        0,
+        255,
+        170
+      ]
+    },
+    {
+      "word": "ICY",
+      "category": "weather",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 11,
+          "col": 8
+        },
+        {
+          "row": 12,
+          "col": 8
+        },
+        {
+          "row": 13,
+          "col": 8
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "TWO",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 1
+        },
+        {
+          "row": 2,
+          "col": 1
+        },
+        {
+          "row": 3,
+          "col": 1
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "NOW",
+      "category": "weather",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row": 1,
+          "col": 8
+        },
+        {
+          "row": 1,
+          "col": 9
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "TEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 5,
+          "col": 10
+        },
+        {
+          "row": 5,
+          "col": 11
+        },
+        {
+          "row": 5,
+          "col": 12
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "OH",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 1,
+          "col": 3
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "TO",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 1,
+          "col": 4
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    }
+  ],
+  "style": {
+    "letter_pitch_mm": 10,
+    "panel_gap_mm": 0
+  }
+}

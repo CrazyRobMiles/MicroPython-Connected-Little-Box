@@ -126,6 +126,17 @@ class CLBManager:
 
         # Return as a lightweight proxy object for convenient dot access
         return _ServiceHandle(matches, prefix)
+
+    def on_setting_changed(self, path, old_value, new_value):
+        """
+        Optional override for managers.
+        Called when this manager's settings change via the 'set' mechanism.
+        path: dotted setting path (string)
+        old_value: previous value
+        new_value: new value
+        """
+        print(f"{self.name} setting {path} changed from {old_value} to {new_value}")
+
     # --- Yielding State Machine Support ---------------------------------------
 
     def change_state(self, fn, state_name=None, *args, **kwargs):

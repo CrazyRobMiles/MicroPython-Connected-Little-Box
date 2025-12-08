@@ -34,6 +34,10 @@
 - Receiving MQTT messages: stable
 - No manager binding to MQTT topics
 - No support for secure sockets
+- Support for file download: beta
+### Settings management
+- Settings storage and reload: stable
+- Support for nested setting values: beta
 ### stepper_manager
 - Core stepping: stable
 - Timed moves: working
