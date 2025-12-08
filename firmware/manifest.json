@@ -1,11 +1,5 @@
 {
   "files": {
-    "firmware/test.py": {
-      "version": "0.0.0",
-      "version_id": 0,
-      "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/test.py"
-    },
     "firmware/graphics/colours.py": {
       "version": "0.0.0",
       "version_id": 0,
@@ -61,9 +55,9 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/umqtt/simple.py"
     },
     "firmware/clb.py": {
-      "version": "0.0.0",
-      "version_id": 0,
-      "sha": "e25d988e82af1a33c60d188995a2c23e52c529de0181788455b1231872f436d5",
+      "version": "1.0.2",
+      "version_id": 10002,
+      "sha": "08f46e49339f63472f5965dbe1641a4bf64b129bcd5372775759712236e9d9ab",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/clb.py"
     },
     "firmware/HullOS/task.py": {
@@ -121,9 +115,9 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/updater_manager.py"
     },
     "firmware/managers/mqtt_manager.py": {
-      "version": "2.0.0",
-      "version_id": 20000,
-      "sha": "0dfeca88b3ef33e7b01f123f139dd019e513e3cd68a150351214e3bb370c877e",
+      "version": "4.0.0",
+      "version_id": 40000,
+      "sha": "3d9496e92972f0dc134683eb2b8734d423e817fbd16a04d860d14521011ae8a3",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/mqtt_manager.py"
     },
     "firmware/managers/stepper_manager.py": {
@@ -141,7 +135,7 @@
     "firmware/managers/base.py": {
       "version": "0.0.0",
       "version_id": 0,
-      "sha": "06fedc4fb4fa6bea4b55af51cb1f424c081734508f6a759d71888023fe0760d7",
+      "sha": "543dfbf23b262274aa6b96bcb05c8ec79f258e7a664486db964ddc152f473e0d",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/base.py"
     },
     "firmware/main.py": {
