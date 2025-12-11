@@ -1,5 +1,6 @@
-from graphics.colours import BLACK,RED,GREEN,BLUE
+version = "1.0.0"
 
+from graphics.colours import BLACK,RED,GREEN,BLUE
 
 class LightPanel:
 

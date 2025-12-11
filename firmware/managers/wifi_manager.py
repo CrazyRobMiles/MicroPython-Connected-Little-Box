@@ -3,7 +3,7 @@ import time
 from managers.base import CLBManager
 
 class Manager(CLBManager):
-    version = "1.0.0"
+    version = "1.0.1"
     dependencies = []
 
     STATE_CONNECTING = "connecting"

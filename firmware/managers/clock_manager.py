@@ -10,7 +10,7 @@ except ImportError:
 	ntptime = None
 
 class Manager(CLBManager):
-	version = "1.0.0"
+	version = "1.0.1"
 	dependencies = ["wifi"]  # wait for WiFi manager to be OK
 
 	STATE_WAITING = "waiting"     # waiting for deps (WiFi)

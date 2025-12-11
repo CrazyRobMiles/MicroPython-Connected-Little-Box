@@ -32,7 +32,7 @@ FETCH_TIMEOUT_MS = 5000        # how long we wait for a response
 FETCH_REQUEST_RETRY_INTERVAL_MS = 1000
 
 class Manager(CLBManager):
-    version = "4.0.0"
+    version = "4.0.1"
     dependencies = ["wifi"]
 
     STATE_WAITING = "waiting"

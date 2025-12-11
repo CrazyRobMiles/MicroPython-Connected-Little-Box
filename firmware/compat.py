@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 # compat.py
 #
 # Cross-platform helpers so CLB managers can run on both:

@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 from graphics.colours import BLACK
 import math
 

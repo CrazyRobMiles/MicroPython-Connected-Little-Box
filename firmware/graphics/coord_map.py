@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 class CoordMap:
 
     PIXEL_TYPE_STRING = "Pixel-string"

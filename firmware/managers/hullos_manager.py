@@ -9,7 +9,7 @@ from HullOS.task import Task
 from HullOS.engine import Engine
 
 class Manager(CLBManager):
-    version = "1.0.0"
+    version = "1.0.1"
     dependencies = ["wifi","clock","mqtt"]
 
     def __init__(self,clb):

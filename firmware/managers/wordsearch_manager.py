@@ -11,7 +11,7 @@ from HullOS.engine import Engine
 from graphics.colours import find_random_colour
 
 class Manager(CLBManager):
-    version = "1.0.0"
+    version = "1.0.1"
     dependencies = ['clock']
 
     SHOW_INACTIVE="inactive"

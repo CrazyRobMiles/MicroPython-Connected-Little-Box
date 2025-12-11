@@ -5,7 +5,7 @@ import time
 
 
 class Manager(CLBManager):
-    version = "1.0.1"
+    version = "1.0.2"
     dependencies = []  # Nothing depends on blink yet
 
     STATE_DISABLED = "disabled"

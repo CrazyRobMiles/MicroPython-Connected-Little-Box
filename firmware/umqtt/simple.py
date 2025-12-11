@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 import socket
 import struct
 from binascii import hexlify

@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 from HullOS.task import Task
 
 class Engine:

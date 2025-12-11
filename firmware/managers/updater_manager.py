@@ -1,273 +1,391 @@
-# updater_manager.py
+# managers/updater_manager.py
 #
-# Auto-update framework for Connected Little Box (CLB)
+# Full updater:
+#  - manifest fetch
+#  - recursive version comparison
+#  - safe file download via MQTT (filename.new)
+#  - verify + atomic rename
+#  - non-blocking state machine
+#  - uses get_service_handle() for MQTT
+#  - binds events via clb.get_event()
+#  - MicroPython compatible
 #
-# This version supports:
-#   ✓ Manifest-driven updates
-#   ✓ Updating ANY .py file (not just managers)
-#   ✓ New file installation
-#   ✓ SHA-based update detection
-#   ✓ User-visible version text
-#   ✓ Automatic restart
-#
-# Expected manifest.json format:
-#
-# {
-#   "files": {
-#       "clb.py": {
-#         "version": "1.0.0",
-#         "sha": "abcdef1234...",
-#         "url": "https://raw.githubusercontent.com/.../clb.py"
-#       },
-#       "managers/base.py": {
-#         "version": "1.0.0",
-#         "sha": "...",
-#         "url": "..."
-#       }
-#   }
-# }
 
+import os
+import json
 from managers.base import CLBManager
-import time, sys, os
+from managers.event import Event
 
-try:
-    import ujson as json
-except ImportError:
-    import json
-
-try:
-    import urequests as requests
-except ImportError:
-    import requests
+MANIFEST_REMOTE = "manifest.json"
+MANIFEST_LOCAL  = "_manifest_tmp.json"
+RANGE = 2000   # chunk size
 
 
 class Manager(CLBManager):
-    version = "2.0.0"
-    dependencies = ["wifi"]
+    version = "3.1.0"
+    dependencies = ["mqtt"]
 
-    STATE_IDLE = "idle"
-    STATE_CHECKING = "checking"
-    STATE_UPDATING = "updating"
-    STATE_ERROR = "error"
+    (
+        PHASE_IDLE,
+        PHASE_WAIT_MANIFEST,
+        PHASE_COMPARE,
+        PHASE_PREP_FILE,
+        PHASE_REQUEST_FILE,
+        PHASE_WAIT_FILE,
+        PHASE_DONE,
+        PHASE_ERROR,
+    ) = range(8)
 
     def __init__(self, clb):
         super().__init__(clb, defaults={
             "enabled": True,
-            "manifest_url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/manifest.json",
-            "check_interval_minutes": 120,
-            "auto_restart": True
+            "source": "",
         })
-        self.state = self.STATE_IDLE
-        self.next_check_ms = 0
-        self.pending_restart = False
 
-    # ----------------------------------------------------------------------
-    # Setup
-    # ----------------------------------------------------------------------
+        self._phase = self.PHASE_IDLE
+        self._full_update = False
+        self.ctx = None
+        self.mqtt = None
 
+        self.events = {
+            "check.start":        Event("check.start", "Check start", self),
+            "check.complete":     Event("check.complete", "Check complete", self),
+            "check.error":        Event("check.error", "Check error", self),
+
+            "update.start":       Event("update.start", "Update start", self),
+            "update.file_start":  Event("update.file_start", "Update file start", self),
+            "update.file_done":   Event("update.file_done", "Update file done", self),
+            "update.complete":    Event("update.complete", "Update complete", self),
+            "update.error":       Event("update.error", "Update error", self),
+        }
+
+    # ---------------------------------------------------------
+    # SETUP
+    # ---------------------------------------------------------
     def setup(self, settings):
         super().setup(settings)
-        if not self.enabled:
-            self.state = "disabled"
+        self.source = settings["source"] or None
+        print("[UPD] setup complete")
+
+    # ---------------------------------------------------------
+    # SETUP SERVICES
+    # ---------------------------------------------------------
+    def setup_services(self):
+        print("[UPD] setup_services")
+
+        self.mqtt = self.get_service_handle("mqtt")
+        if not self.mqtt:
+            print("[UPD] MQTT not available — updater idle")
             return
 
-        self.state = self.STATE_IDLE
-        self.next_check_ms = time.ticks_ms()  # perform initial check ASAP
-        self.set_status(9000, "Updater ready (SHA-based mode)")
+        print("[UPD] MQTT resolved")
 
-    # ----------------------------------------------------------------------
-    # Main update loop
-    # ----------------------------------------------------------------------
+        evt = self.clb.get_event("file.fetch_complete")
+        if evt:
+            evt.subscribe(self._on_fetch_complete)
+            print("[UPD] Bound to file.fetch_complete")
 
-    def update(self):
-        if not self.enabled:
+        evt = self.clb.get_event("file.fetch_error")
+        if evt:
+            evt.subscribe(self._on_fetch_error)
+            print("[UPD] Bound to file.fetch_error")
+
+        print("[UPD] Updater service wiring complete")
+
+    # ---------------------------------------------------------
+    # COMMAND INTERFACE
+    # ---------------------------------------------------------
+    def get_interface(self):
+        return {
+            "check":        ("check - fetch manifest and compare", self.command_check),
+            "check_local":  ("check_local - compare with cached manifest", self.command_check_local),
+            "update":       ("update - full OTA update", self.command_update),
+            "show_versions":("show_versions - print local versions", self.command_show_versions),
+        }
+
+    def command_check(self):
+        self._start_process(full_update=False, fetch_manifest=True)
+
+    def command_check_local(self):
+        self._start_process(full_update=False, fetch_manifest=False)
+
+    def command_update(self):
+        self._start_process(full_update=True, fetch_manifest=True)
+
+    def command_show_versions(self):
+        for f, v in self._read_local_versions().items():
+            print(f"{f}: {v}")
+
+    # ---------------------------------------------------------
+    # START PROCESS
+    # ---------------------------------------------------------
+    def _start_process(self, full_update, fetch_manifest):
+        if self._phase not in (self.PHASE_IDLE, self.PHASE_DONE, self.PHASE_ERROR):
+            print("[UPD] Cannot start — updater busy")
             return
 
-        if self.pending_restart:
-            time.sleep(0.5)
-            self._restart_system()
+        if not self.mqtt:
+            print("[UPD] Cannot start — MQTT not resolved")
             return
 
-        if self.state == self.STATE_IDLE:
-            if time.ticks_diff(time.ticks_ms(), self.next_check_ms) >= 0:
-                self._check_for_updates()
+        self._full_update = full_update
 
-    # ----------------------------------------------------------------------
-    # Manifest Fetch + Compare + Update
-    # ----------------------------------------------------------------------
+        self.ctx = {
+            "manifest": None,
+            "pending": [],
+            "current": None,
+        }
 
-    def _check_for_updates(self):
-        self.state = self.STATE_CHECKING
-        url = self.settings["manifest_url"]
-        self.set_status(9001, f"Fetching manifest: {url}")
-
-        try:
-            r = requests.get(url)
-            if r.status_code != 200:
-                raise OSError(f"HTTP {r.status_code}")
-            manifest = r.json()
-        except Exception as e:
-            self.state = self.STATE_ERROR
-            self.set_status(9002, f"Manifest fetch failed: {e}")
-            self._schedule_next()
-            return
-
-        if "files" not in manifest:
-            self.state = self.STATE_ERROR
-            self.set_status(9003, "Manifest missing 'files' section")
-            self._schedule_next()
-            return
-
-        updates = self._compare_with_local_shas(manifest["files"])
-        if updates:
-            self._perform_updates(updates)
+        if full_update:
+            self.events["update.start"].publish({})
         else:
-            self.set_status(9004, "All files up to date")
-            self.state = self.STATE_IDLE
-            self._schedule_next()
+            self.events["check.start"].publish({})
 
-    def _schedule_next(self):
-        mins = int(self.settings["check_interval_minutes"])
-        self.next_check_ms = time.ticks_add(time.ticks_ms(), mins * 60_000)
+        self.set_status(5600, "Updater: starting")
 
-    # ----------------------------------------------------------------------
-    # SHA compare logic
-    # ----------------------------------------------------------------------
+        if fetch_manifest:
+            print(f"[UPD] Requesting manifest.json (source={self.source})")
+            self.mqtt.fetch_file(MANIFEST_REMOTE, MANIFEST_LOCAL, RANGE, self.source)
+            self._phase = self.PHASE_WAIT_MANIFEST
+        else:
+            if not os.path.exists(MANIFEST_LOCAL):
+                self._fail("No local manifest available")
+                return
+            print("[UPD] Using existing manifest")
+            self._load_manifest()
 
-    def _compare_with_local_shas(self, remote_files):
-        """
-        Returns list of dicts:
-        [
-            { "path": "clb.py", "url": "...", "sha": "...", "version": "..." },
-            ...
-        ]
-        """
-        updates = []
+    # ---------------------------------------------------------
+    # NON-BLOCKING UPDATE LOOP
+    # ---------------------------------------------------------
+    def update(self):
+        if self._phase == self.PHASE_IDLE:
+            return
 
-        for path, info in remote_files.items():
-            key = f"sha:{path}"  # how we store local SHAs in settings
+        elif self._phase == self.PHASE_WAIT_MANIFEST:
+            return
 
-            local_sha = self.settings.get(key, None)
-            remote_sha = info.get("sha")
+        elif self._phase == self.PHASE_COMPARE:
+            self._compare_manifest()
+            return
 
-            # If no local SHA or mismatch → update required
-            if (not local_sha) or (local_sha != remote_sha):
-                updates.append({
-                    "path": path,
-                    "url": info.get("url"),
-                    "sha": remote_sha,
-                    "version": info.get("version", "0.0.0")
-                })
+        elif self._phase == self.PHASE_PREP_FILE:
+            self._prep_next_file()
+            return
 
-        return updates
+        elif self._phase == self.PHASE_REQUEST_FILE:
+            self._request_file()
+            return
 
-    # ----------------------------------------------------------------------
-    # Perform updates
-    # ----------------------------------------------------------------------
+        elif self._phase == self.PHASE_WAIT_FILE:
+            return
 
-    def _perform_updates(self, updates):
-        self.state = self.STATE_UPDATING
-        self.set_status(9010, f"Updating {len(updates)} file(s)...")
+        elif self._phase == self.PHASE_DONE:
+            if self._full_update:
+                self.events["update.complete"].publish({})
+            else:
+                self.events["check.complete"].publish({})
+            self._phase = self.PHASE_IDLE
+            print("[UPD] process complete → idle")
+            return
 
-        for item in updates:
-            path = item["path"]
-            url = item["url"]
-            expected_sha = item["sha"]
+        elif self._phase == self.PHASE_ERROR:
+            return
 
+    # ---------------------------------------------------------
+    # EVENT HANDLERS
+    # ---------------------------------------------------------
+    def _on_fetch_complete(self, event, data):
+        dest = data["dest"]
+        file = data["file"]
+        size = data.get("bytes", 0)
+
+        print(f"[UPD] fetch_complete: {file} → {dest} ({size} bytes)")
+
+        # Manifest
+        if dest == MANIFEST_LOCAL and self._phase == self.PHASE_WAIT_MANIFEST:
+            self._load_manifest()
+            return
+
+        # File for update
+        if self._phase == self.PHASE_WAIT_FILE:
             try:
-                self._download_and_install(path, url)
-                # Save new SHA to settings
-                key = f"sha:{path}"
-                self.settings[key] = expected_sha
-                # persist CLB settings
-                try:
-                    self.clb.settings["updater"][key] = expected_sha
-                except:
-                    pass
-                self.set_status(9011, f"Updated {path}")
+                self._apply_file_update(self.ctx["current"])
             except Exception as e:
-                self.state = self.STATE_ERROR
-                self.set_status(9012, f"Update failed ({path}): {e}")
+                self._fail(f"File apply failed: {e}")
                 return
 
-        self.set_status(9013, "All updates installed")
-        # Restart if enabled
-        if self.settings["auto_restart"]:
-            self.pending_restart = True
-        else:
-            self.state = self.STATE_IDLE
-            self._schedule_next()
+            self.events["update.file_done"].publish({"file": file})
+            self._phase = self.PHASE_PREP_FILE
 
-    def _download_and_install(self, filepath, url):
-        self.set_status(9014, f"Downloading {filepath}")
+    def _on_fetch_error(self, event, data):
+        print("[UPD] fetch_error:", data)
+        self._fail("Fetch error: " + str(data))
 
-        r = requests.get(url)
-        if r.status_code != 200:
-            raise OSError(f"HTTP {r.status_code}")
-
-        code = r.text
-
-        # Ensure directory exists
-        folder = os.path.dirname(filepath)
-        if folder and folder not in ("", "/"):
-            try:
-                os.mkdir(folder)
-            except:
-                pass
-
-        tmp = "/update.tmp"
-
-        with open(tmp, "w") as f:
-            f.write(code)
-
-        # Atomically replace or create file
-        # Remove old file if present
+    # ---------------------------------------------------------
+    # MANIFEST HANDLING
+    # ---------------------------------------------------------
+    def _load_manifest(self):
+        print("[UPD] Reading manifest…")
         try:
-            os.remove(filepath)
+            with open(MANIFEST_LOCAL) as fp:
+                self.ctx["manifest"] = json.load(fp)
+        except Exception as e:
+            self._fail(str(e))
+            return
+
+        print("[UPD] Manifest loaded")
+        self._phase = self.PHASE_COMPARE
+
+    # ---------------------------------------------------------
+    # VERSION COMPARISON
+    # ---------------------------------------------------------
+    def _compare_manifest(self):
+        manifest = self.ctx["manifest"]
+        local_versions = self._read_local_versions()
+
+        print("[UPD] Comparing versions…")
+        pending = []
+
+        for fname, entry in manifest.items():
+            remote = entry.get("version", "?")
+            local = local_versions.get(fname)
+
+            print(f"[UPD] {fname}: local={local} remote={remote}")
+
+            if local != remote:
+                pending.append(fname)
+
+        self.ctx["pending"] = pending
+
+        if not self._full_update:
+            print("[UPD] CHECK ONLY — pending updates:")
+            for f in pending:
+                print("   →", f)
+            self._phase = self.PHASE_DONE
+            return
+
+        print("[UPD] UPDATE MODE — files that need updating:", pending)
+        self._phase = self.PHASE_PREP_FILE
+
+    # ---------------------------------------------------------
+    # UPDATE: PREP NEXT FILE
+    # ---------------------------------------------------------
+    def _prep_next_file(self):
+        if not self.ctx["pending"]:
+            print("[UPD] All files updated")
+            self._phase = self.PHASE_DONE
+            return
+
+        fname = self.ctx["pending"].pop(0)
+        self.ctx["current"] = fname
+
+        print(f"[UPD] Preparing update for: {fname}")
+        self.events["update.file_start"].publish({"file": fname})
+
+        self._phase = self.PHASE_REQUEST_FILE
+
+    # ---------------------------------------------------------
+    # REQUEST FILE DOWNLOAD (to .new)
+    # ---------------------------------------------------------
+    def _request_file(self):
+        fname = self.ctx["current"]
+        temp = fname + ".new"
+
+        print(f"[UPD] Requesting download: {fname} → {temp}")
+
+        self.mqtt.fetch_file(fname, temp, RANGE, self.source)
+
+        self._phase = self.PHASE_WAIT_FILE
+
+    # ---------------------------------------------------------
+    # APPLY DOWNLOADED FILE (safe write + atomic rename)
+    # ---------------------------------------------------------
+    def _apply_file_update(self, filename):
+        newfile = filename + ".new"
+
+        print(f"[UPD] Verifying downloaded file: {newfile}")
+
+        try:
+            st = os.stat(newfile)
+        except:
+            raise RuntimeError("Downloaded file missing")
+
+        size = st[6] if len(st) > 6 else st[0]
+        if size <= 0:
+            raise RuntimeError("Downloaded file is empty")
+
+        print(f"[UPD] Download OK ({size} bytes)")
+
+        # Remove old file if exists
+        try:
+            os.remove(filename)
+            print(f"[UPD] Removed old: {filename}")
         except:
             pass
 
-        os.rename(tmp, filepath)
+        # Atomic rename
+        try:
+            os.rename(newfile, filename)
+            print(f"[UPD] Installed: {filename}")
+        except Exception as e:
+            raise RuntimeError(f"Rename failed: {e}")
 
-    # ----------------------------------------------------------------------
-    # Restart system
-    # ----------------------------------------------------------------------
+    # ---------------------------------------------------------
+    # READ VERSIONS (MicroPython safe)
+    # ---------------------------------------------------------
+    def _read_local_versions(self):
+        versions = {}
+        IGNORE = {"__pycache__", ".git", ".vscode"}
 
-    def _restart_system(self):
-        self.set_status(9015, "Restarting to apply updates…")
-        import machine
-        time.sleep(0.2)
-        machine.reset()
+        print("[UPD] Scanning local files…")
 
-    # ----------------------------------------------------------------------
-    # Console interface
-    # ----------------------------------------------------------------------
+        def scan(path):
+            try:
+                items = os.listdir(path)
+            except:
+                return
 
-    def get_interface(self):
-        return {
-            "check": ("Force update check now", self.cmd_check),
-            "restart": ("Restart immediately", self.cmd_restart),
-            "status": ("Show updater status", self.cmd_status),
-            "list": ("Show known file SHAs", self.cmd_list)
-        }
+            for name in items:
+                full = path + "/" + name if path else name
 
-    def cmd_check(self):
-        self.next_check_ms = time.ticks_ms() - 1
-        self.set_status(9020, "Manual update triggered")
+                try:
+                    st = os.stat(full)
+                except:
+                    continue
 
-    def cmd_restart(self):
-        self.pending_restart = True
-        self.set_status(9021, "Manual restart triggered")
+                mode = st[0]
 
-    def cmd_status(self):
-        print(f"Updater state: {self.state}")
-        print(f"Next check in: {time.ticks_diff(self.next_check_ms, time.ticks_ms())} ms")
-        print("Enabled:", self.enabled)
-        return "OK"
+                # folder?
+                if mode & 0x4000:
+                    if name not in IGNORE:
+                        scan(full)
+                    continue
 
-    def cmd_list(self):
-        """List stored SHAs for debug."""
-        print("Stored SHAs:")
-        for k, v in self.settings.items():
-            if k.startswith("sha:"):
-                print(f"  {k}: {v}")
+                if full.endswith(".py"):
+                    try:
+                        with open(full) as fp:
+                            for line in fp:
+                                if "version" in line and "=" in line:
+                                    ver = line.split("=",1)[1].strip().strip('"\'')
+                                    versions[full] = ver
+                                    print(f"[UPD] Found version: {full} = {ver}")
+                                    break
+                    except:
+                        print("[UPD] Cannot read", full)
+
+        scan(".")
+        return versions
+
+    # ---------------------------------------------------------
+    # FAIL
+    # ---------------------------------------------------------
+    def _fail(self, msg):
+        print("[UPD] ERROR:", msg)
+        self.set_status(5699, msg)
+
+        if self._full_update:
+            self.events["update.error"].publish({"error": msg})
+        else:
+            self.events["check.error"].publish({"error": msg})
+
+        self._phase = self.PHASE_ERROR

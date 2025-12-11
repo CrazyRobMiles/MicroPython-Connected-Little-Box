@@ -6,7 +6,7 @@ import time
 
 class CLB:
 
-	version = "1.0.2"
+	version = "1.0.0"
 
 
 	def __init__(self, config):

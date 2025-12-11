@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 from graphics.colours import ColourFadeManager
 from graphics.sprite import Sprite
 from graphics.light_panel import LightPanel

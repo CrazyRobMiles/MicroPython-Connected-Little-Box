@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 class TextManager():
 
     font_5x3 = (

@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 from graphics.sprite import Sprite
 
 import random

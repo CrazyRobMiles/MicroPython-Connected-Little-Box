@@ -19,7 +19,7 @@ class Manager(CLBManager):
     - Public API: move(mm), rotate(deg), arc(radius, deg) + console commands.
     """
 
-    version = "1.3.0"
+    version = "1.3.1"
     dependencies = []  # no automatic dependencies
 
     STATE_DISABLED = "disabled"

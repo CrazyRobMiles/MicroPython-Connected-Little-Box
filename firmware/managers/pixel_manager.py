@@ -14,7 +14,7 @@ from graphics.coord_map import CoordMap
 from graphics.animations import anim_wandering_sprites,anim_robot_sprites
 
 class Manager(CLBManager):
-    version = "1.0.0"
+    version = "1.0.1"
     dependencies = []
 
     def __init__(self,clb):

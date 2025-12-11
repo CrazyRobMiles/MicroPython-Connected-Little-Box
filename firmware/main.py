@@ -1,3 +1,5 @@
+version = "1.0.0"
+
 from device_configurator import DeviceConfigurator
 
 from clb import CLB
