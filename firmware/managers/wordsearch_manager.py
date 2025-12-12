@@ -11,7 +11,7 @@ from HullOS.engine import Engine
 from graphics.colours import find_random_colour
 
 class Manager(CLBManager):
-    version = "1.0.1"
+    version = "1.0.0"
     dependencies = ['clock']
 
     SHOW_INACTIVE="inactive"
@@ -93,7 +93,7 @@ class Manager(CLBManager):
 
         if minute == 0:
             words.append(self.hour_words[hour])
-            words.extend(("OCLOCK"))
+            words.extend(("OCLOCK",))
             return tuple(words)
 
         if minute <= 30:

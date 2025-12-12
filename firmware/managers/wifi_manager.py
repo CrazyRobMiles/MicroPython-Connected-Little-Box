@@ -36,6 +36,7 @@ class Manager(CLBManager):
 
         try:
             self.wlan.active(True)
+            self.wlan.config(pm=0)            
             self.wlan.connect(self.ssid, self.password)
             self.connect_start_time = time.ticks_ms()
             self.state = self.STATE_CONNECTING
@@ -53,6 +54,7 @@ class Manager(CLBManager):
                 ip = self.wlan.ifconfig()[0]
                 self.state = self.STATE_OK
                 self.set_status(2000, f"WiFi connected, IP: {ip}")
+                time.sleep(0.5)
             elif time.ticks_diff(time.ticks_ms(), self.connect_start_time) > 10000:
                 self.state = self.STATE_ERROR
                 self.set_status(2001, "WiFi connection timeout")

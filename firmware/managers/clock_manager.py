@@ -3,38 +3,98 @@ from managers.base import CLBManager
 from managers.event import Event
 import time
 import machine
+import socket
+import struct
 
-try:
-	import ntptime  # MicroPython NTP helper (sets RTC in UTC)
-except ImportError:
-	ntptime = None
+# NTP constants
+_NTP_EPOCH_DELTA = 2208988800  # seconds between 1900 and 1970
+
+class _AsyncNTP:
+	"""
+	Robust async-ish NTP client for MicroPython.
+	Uses short socket timeouts instead of true non-blocking mode.
+	"""
+	def __init__(self, host, timeout_ms=3000):
+		self.host = host
+		self.timeout_ms = timeout_ms
+		self.sock = None
+		self.addr = None
+		self.start_ms = 0
+		self.epoch_utc = None
+		self.done = False
+
+	def start(self):
+		import socket
+		import time
+
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.sock.settimeout(0.1)   # IMPORTANT: not 0
+		self.addr = socket.getaddrinfo(self.host, 123)[0][-1]
+
+		pkt = bytearray(48)
+		pkt[0] = 0x1B  # NTP client request
+
+		self.sock.sendto(pkt, self.addr)
+		self.start_ms = time.ticks_ms()
+
+	def poll(self):
+		import time
+		import struct
+
+		if self.done:
+			return True
+
+		# overall timeout
+		if time.ticks_diff(time.ticks_ms(), self.start_ms) > self.timeout_ms:
+			self._close()
+			self.done = True
+			return False
+
+		try:
+			data, _ = self.sock.recvfrom(48)
+			if data and len(data) >= 48:
+				secs = struct.unpack("!I", data[40:44])[0]
+				self.epoch_utc = secs - 2208988800
+				self._close()
+				self.done = True
+				return True
+		except OSError:
+			# no data yet
+			pass
+
+		return None
+
+	def _close(self):
+		try:
+			self.sock.close()
+		except Exception:
+			pass
+		self.sock = None
 
 class Manager(CLBManager):
-	version = "1.0.1"
-	dependencies = ["wifi"]  # wait for WiFi manager to be OK
+	version = "1.1.0"
+	dependencies = ["wifi"]
 
-	STATE_WAITING = "waiting"     # waiting for deps (WiFi)
-	STATE_SYNCING = "syncing"     # actively doing NTP
-	STATE_ERROR = "error"
+	STATE_WAITING  = "waiting"
+	STATE_SYNCING  = "syncing"
+	STATE_ERROR    = "error"
 
-	def __init__(self,clb):
-		# tz_offset_minutes: simple fixed-offset timezone (DST can be handled by changing this value)
-		# resync_minutes: how often to resync from NTP while online
+	def __init__(self, clb):
 		super().__init__(clb, defaults={
 			"enabled": False,
-			"ntpserver": "pool.ntp.org",
+			"ntpserver": "129.6.15.28",   # numeric by default (no DNS stall)
 			"tz_offset_minutes": 0,
-			"resync_minutes": 180,          # every 3 hours
-			"sync_timeout_ms": 5000,        # informal budget; NTP has its own socket timeout
+			"resync_minutes": 180,
+			"sync_timeout_ms": 2000,
 			"sync_on_start": True
 		})
 
+		self._rtc = machine.RTC()
+		self._ntp = None
 		self._next_sync_due_ms = 0
 		self._last_sync_epoch_utc = 0
-		self._have_ntp = (ntptime is not None)
-		self._rtc = machine.RTC()
 
-		# Define events owned by this manager
+		# Event ownership
 		self.events = {
 			"clock.second": Event("clock.second", "Fired every second", self),
 			"clock.minute": Event("clock.minute", "Fired every minute", self),
@@ -47,38 +107,31 @@ class Manager(CLBManager):
 		self._last_hour = None
 		self._last_day = None
 
-	# --- Utilities ----------------------------------------------------------
+	# ------------------------------------------------------------------
+	# Time helpers
+	# ------------------------------------------------------------------
 
-	def _now_epoch_utc(self) -> int:
-		# After ntptime.settime(), time.time() is seconds since epoch in UTC
+	def _now_epoch_utc(self):
 		try:
 			return int(time.time())
 		except Exception:
 			return 0
 
-	def _now_epoch_local(self) -> int:
-		return self._now_epoch_utc() + int(self.settings.get("tz_offset_minutes", 0)) * 60
-
-	def _iso_from_tuple(self, t):
-		# t: localtime() or gmtime() 8-tuple
-		y, m, d, hh, mm, ss, _, _ = t
-		return f"{y:04d}-{m:02d}-{d:02d}T{hh:02d}:{mm:02d}:{ss:02d}"
-
-	def _format_status_time(self):
-		try:
-			lt = time.localtime(self._now_epoch_local())
-			return self._iso_from_tuple(lt)
-		except Exception:
-			return "unknown"
+	def _now_epoch_local(self):
+		return self._now_epoch_utc() + int(self.settings["tz_offset_minutes"]) * 60
 
 	def _schedule_next_sync(self):
-		mins = int(self.settings.get("resync_minutes", 180))
-		self._next_sync_due_ms = time.ticks_add(time.ticks_ms(), mins * 60_000)
+		mins = int(self.settings["resync_minutes"])
+		self._next_sync_due_ms = time.ticks_add(
+			time.ticks_ms(), mins * 60_000
+		)
 
-	def _due_for_sync(self) -> bool:
+	def _due_for_sync(self):
 		return time.ticks_diff(time.ticks_ms(), self._next_sync_due_ms) >= 0
 
-	# --- CLB lifecycle ------------------------------------------------------
+	# ------------------------------------------------------------------
+	# Lifecycle
+	# ------------------------------------------------------------------
 
 	def setup(self, settings):
 		super().setup(settings)
@@ -87,18 +140,11 @@ class Manager(CLBManager):
 			self.state = self.STATE_DISABLED
 			return
 
-		if not self._have_ntp:
-			self.state = self.STATE_ERROR
-			self.set_status(5000, "ntptime not available on this firmware")
-			return
-
-		# Start in waiting until WiFi is up
 		self.state = self.STATE_WAITING
 		self.set_status(5001, "Clock waiting for WiFi")
 
-		# If requested, sync ASAP once WiFi comes up
 		if self.settings.get("sync_on_start", True):
-			self._next_sync_due_ms = time.ticks_ms()  # immediate
+			self._next_sync_due_ms = time.ticks_ms()
 		else:
 			self._schedule_next_sync()
 
@@ -106,27 +152,49 @@ class Manager(CLBManager):
 		if not self.enabled:
 			return
 
-		# If WiFi drops, go back to waiting (RTC keeps running, but we won't try NTP)
+		# Dependency gate
 		if self.unresolved_dependencies():
 			if self.state != self.STATE_WAITING:
 				self.state = self.STATE_WAITING
 				self.set_status(5002, "Clock paused (waiting for WiFi)")
 			return
 
-		# With WiFi available:
+		# Start async NTP if due
 		if self.state in (self.STATE_WAITING, self.STATE_OK):
-			if self._due_for_sync():
-				self._attempt_sync()
-			else:
-				if self.state == self.STATE_WAITING:
-					# No sync needed yet—still fine to operate off RTC
-					self.state = self.STATE_OK
-					self.set_status(5006, f"Clock running from RTC; next sync at ~{self._format_status_time()} local")
+			if self._due_for_sync() and self._ntp is None:
+				self._start_async_sync()
 
-		elif self.state == self.STATE_SYNCING:
-			# sync happens inline in _attempt_sync(); nothing to do here
-			pass
+		# Poll async NTP
+		if self.state == self.STATE_SYNCING and self._ntp:
+			result = self._ntp.poll()
 
+			if result is True:
+				t = time.gmtime(self._ntp.epoch_utc)
+
+				# RTC expects: (year, month, day, weekday, hour, minute, second, subseconds)
+				self._rtc.datetime((
+					t[0],  # year
+					t[1],  # month
+					t[2],  # day
+					t[6],  # weekday (0=Monday)
+					t[3],  # hour
+					t[4],  # minute
+					t[5],  # second
+					0       # subseconds
+				))
+				self._last_sync_epoch_utc = self._ntp.epoch_utc
+				self._schedule_next_sync()
+				self._ntp = None
+				self.state = self.STATE_OK
+				self.set_status(5005, "Time synced (async NTP)")
+
+			elif result is False:
+				self._schedule_next_sync()
+				self._ntp = None
+				self.state = self.STATE_OK
+				self.set_status(5007, "Async NTP failed; retry later")
+
+		# Emit clock events (RTC always runs)
 		t = time.localtime(self._now_epoch_local())
 		sec, minute, hour, day = t[5], t[4], t[3], t[2]
 
@@ -147,88 +215,46 @@ class Manager(CLBManager):
 			self.events["clock.day"].publish({"time": t})
 
 	def teardown(self):
-		# Nothing persistent to close for RTC/NTP
+		self._ntp = None
 		self.set_status(5019, "Clock manager torn down")
 
-	# --- NTP & time access --------------------------------------------------
+	# ------------------------------------------------------------------
+	# Async NTP start
+	# ------------------------------------------------------------------
 
-	def _attempt_sync(self):
-		if not self._have_ntp:
-			self.state = self.STATE_ERROR
-			self.set_status(5003, "NTP not supported")
-			return
-
+	def _start_async_sync(self):
 		try:
 			self.state = self.STATE_SYNCING
-			host = self.settings.get("ntpserver", "pool.ntp.org") or "pool.ntp.org"
-			ntptime.host = host
-			self.set_status(5004, f"Syncing clock via NTP: {host}")
-			ntptime.settime()  # sets RTC to UTC
-			self._last_sync_epoch_utc = self._now_epoch_utc()
-			self._schedule_next_sync()
-			self.state = self.STATE_OK
-			self.set_status(5005, f"Time synced. Local: {self._format_status_time()}")
+			self._ntp = _AsyncNTP(
+				self.settings["ntpserver"],
+				self.settings["sync_timeout_ms"]
+			)
+			self._ntp.start()
+			self.set_status(5004, f"Async NTP request sent to {self.settings['ntpserver']}")
 		except Exception as e:
-			# Keep running from RTC; try again later
 			self.state = self.STATE_OK
+			self._ntp = None
 			self._schedule_next_sync()
-			self.set_status(5007, f"NTP sync failed; will retry later. {e}")
+			self.set_status(5007, f"NTP init failed: {e}")
 
-	# Public getters (for other managers / commands)
-	def get_time_dict(self):
-		"""Returns a dict with both UTC and local time values."""
-		try:
-			utc_epoch = self._now_epoch_utc()
-			loc_epoch = self._now_epoch_local()
-
-			u = time.gmtime(utc_epoch)
-			l = time.localtime(loc_epoch)
-
-			return {
-				"utc_epoch": utc_epoch,
-				"utc_iso": self._iso_from_tuple(u),
-				"utc_tuple": u,
-				"local_epoch": loc_epoch,
-				"local_iso": self._iso_from_tuple(l),
-				"local_tuple": l,
-				"tz_offset_minutes": int(self.settings.get("tz_offset_minutes", 0)),
-				"last_sync_epoch_utc": self._last_sync_epoch_utc,
-				"state": self.state
-			}
-		except Exception as e:
-			return {"error": str(e), "state": self.state}
+	# ------------------------------------------------------------------
+	# Public API
+	# ------------------------------------------------------------------
 
 	def get_time_tuple(self):
-		"""Return (hour, minute, second)"""
-		t = time.localtime()
+		t = time.localtime(self._now_epoch_local())
 		return (t[3], t[4], t[5])
 
-	def get_date_tuple(self):
-		"""Return (year, month, day)"""
-		t = time.localtime()
-		return (t[0], t[1], t[2])
-
-	def get_datetime_string(self):
-		"""Return formatted datetime for debugging"""
-		t = time.localtime()
-		return f"{t[2]:02d}/{t[1]:02d}/{t[0]} {t[3]:02d}:{t[4]:02d}:{t[5]:02d}"
-	
 	def get_interface(self):
 		return {
-			"on": ("Enable clock manager", self.command_enable),
-			"off": ("Disable clock manager", self.command_disable),
-			"now": ("Show current local and UTC time", self.command_now),
-			"sync": ("Force an immediate NTP sync", self.command_sync),
-			"utc": ("Show UTC epoch and ISO time", self.command_utc),
-			"local": ("Show local epoch and ISO time", self.command_local),
-			"time":("Get time tuple", self.get_time_tuple),
-			"date":("Get date tuple", self.get_date_tuple),
-			"string":("Get date string", self.get_datetime_string)
+			"on":   ("Enable clock manager", self.command_enable),
+			"off":  ("Disable clock manager", self.command_disable),
+			"sync": ("Force async NTP sync", self.command_sync),
+			"time": ("Get time tuple", self.get_time_tuple),
 		}
 
 	def command_enable(self):
 		self.enabled = True
-		self.set_status(5010, "Clock manually enabled")
 		self.setup(self.settings)
 
 	def command_disable(self):
@@ -236,47 +262,8 @@ class Manager(CLBManager):
 		self.state = self.STATE_DISABLED
 		self.set_status(5011, "Clock manually disabled")
 
-	def command_now(self):
-		t = self.get_time_dict()
-		if "error" in t:
-			self.set_status(5012, f"Clock error: {t['error']}")
-		else:
-			self.set_status(
-				5013,
-				f"Local {t['local_iso']} (UTC{t['tz_offset_minutes']:+d}m) | UTC {t['utc_iso']}"
-			)
-
 	def command_sync(self):
 		if self.unresolved_dependencies():
 			self.set_status(5014, "Cannot sync: WiFi not ready")
 			return
-		self._next_sync_due_ms = time.ticks_ms()  # make it due now
-		self._attempt_sync()
-
-	def command_utc(self):
-		t = self.get_time_dict()
-		if "error" in t:
-			self.set_status(5015, f"UTC error: {t['error']}")
-		else:
-			self.set_status(5016, f"UTC: {t['utc_epoch']} ({t['utc_iso']})")
-
-	def command_local(self):
-		t = self.get_time_dict()
-		if "error" in t:
-			self.set_status(5017, f"Local error: {t['error']}")
-		else:
-			self.set_status(5018, f"Local: {t['local_epoch']} ({t['local_iso']})")
-
-	# --- Event publishers --------------------------------------------------
-
-	def _fire_second_event(self, t):
-		self.clb.publish("clock.second", t)
-
-	def _fire_minute_event(self, t):
-		self.clb.publish("clock.minute", t)
-
-	def _fire_hour_event(self, t):
-		self.clb.publish("clock.hour", t)
-
-	def _fire_day_event(self, t):
-		self.clb.publish("clock.day", t)
+		self._next_sync_due_ms = time.ticks_ms()

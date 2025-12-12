@@ -1,14 +1,14 @@
 # managers/updater_manager.py
 #
 # Full updater:
-#  - manifest fetch
-#  - recursive version comparison
+#  - manifest fetch (via MQTT file.fetch)
+#  - recursive version comparison over all .py files
 #  - safe file download via MQTT (filename.new)
 #  - verify + atomic rename
-#  - non-blocking state machine
+#  - non-blocking state machine using _phase
 #  - uses get_service_handle() for MQTT
-#  - binds events via clb.get_event()
-#  - MicroPython compatible
+#  - binds to file.fetch_complete / file.fetch_error via clb.get_event()
+#  - MicroPython compatible (no os.walk)
 #
 
 import os
@@ -18,11 +18,11 @@ from managers.event import Event
 
 MANIFEST_REMOTE = "manifest.json"
 MANIFEST_LOCAL  = "_manifest_tmp.json"
-RANGE = 2000   # chunk size
+RANGE = 2000   # chunk size in bytes
 
 
 class Manager(CLBManager):
-    version = "3.1.0"
+    version = "3.1.1"
     dependencies = ["mqtt"]
 
     (
@@ -39,11 +39,11 @@ class Manager(CLBManager):
     def __init__(self, clb):
         super().__init__(clb, defaults={
             "enabled": True,
-            "source": "",
+            "source": "",     # optional source device name; empty = server
         })
 
         self._phase = self.PHASE_IDLE
-        self._full_update = False
+        self._full_update = False  # True for updater.update, False for check*
         self.ctx = None
         self.mqtt = None
 
@@ -60,16 +60,13 @@ class Manager(CLBManager):
         }
 
     # ---------------------------------------------------------
-    # SETUP
+    # SETUP / SERVICES
     # ---------------------------------------------------------
     def setup(self, settings):
         super().setup(settings)
         self.source = settings["source"] or None
         print("[UPD] setup complete")
 
-    # ---------------------------------------------------------
-    # SETUP SERVICES
-    # ---------------------------------------------------------
     def setup_services(self):
         print("[UPD] setup_services")
 
@@ -84,11 +81,15 @@ class Manager(CLBManager):
         if evt:
             evt.subscribe(self._on_fetch_complete)
             print("[UPD] Bound to file.fetch_complete")
+        else:
+            print("[UPD] WARNING: file.fetch_complete event not found")
 
         evt = self.clb.get_event("file.fetch_error")
         if evt:
             evt.subscribe(self._on_fetch_error)
             print("[UPD] Bound to file.fetch_error")
+        else:
+            print("[UPD] WARNING: file.fetch_error event not found")
 
         print("[UPD] Updater service wiring complete")
 
@@ -117,7 +118,7 @@ class Manager(CLBManager):
             print(f"{f}: {v}")
 
     # ---------------------------------------------------------
-    # START PROCESS
+    # PROCESS START
     # ---------------------------------------------------------
     def _start_process(self, full_update, fetch_manifest):
         if self._phase not in (self.PHASE_IDLE, self.PHASE_DONE, self.PHASE_ERROR):
@@ -133,6 +134,7 @@ class Manager(CLBManager):
         self.ctx = {
             "manifest": None,
             "pending": [],
+            "newer":[],
             "current": None,
         }
 
@@ -162,7 +164,7 @@ class Manager(CLBManager):
             return
 
         elif self._phase == self.PHASE_WAIT_MANIFEST:
-            return
+            return  # waiting for fetch_complete
 
         elif self._phase == self.PHASE_COMPARE:
             self._compare_manifest()
@@ -177,7 +179,7 @@ class Manager(CLBManager):
             return
 
         elif self._phase == self.PHASE_WAIT_FILE:
-            return
+            return  # waiting for fetch_complete
 
         elif self._phase == self.PHASE_DONE:
             if self._full_update:
@@ -211,7 +213,7 @@ class Manager(CLBManager):
             try:
                 self._apply_file_update(self.ctx["current"])
             except Exception as e:
-                self._fail(f"File apply failed: {e}")
+                self._fail("File apply failed: " + str(e))
                 return
 
             self.events["update.file_done"].publish({"file": file})
@@ -222,7 +224,7 @@ class Manager(CLBManager):
         self._fail("Fetch error: " + str(data))
 
     # ---------------------------------------------------------
-    # MANIFEST HANDLING
+    # MANIFEST LOADING
     # ---------------------------------------------------------
     def _load_manifest(self):
         print("[UPD] Reading manifest…")
@@ -230,37 +232,96 @@ class Manager(CLBManager):
             with open(MANIFEST_LOCAL) as fp:
                 self.ctx["manifest"] = json.load(fp)
         except Exception as e:
-            self._fail(str(e))
+            self._fail("Manifest parse error: " + str(e))
             return
 
         print("[UPD] Manifest loaded")
         self._phase = self.PHASE_COMPARE
 
+    def _parse_version(self, v):
+        return tuple(int(p) for p in v.split("."))
+
     # ---------------------------------------------------------
-    # VERSION COMPARISON
+    # VERSION COMPARISON (robust manifest iteration)
     # ---------------------------------------------------------
     def _compare_manifest(self):
         manifest = self.ctx["manifest"]
+        if manifest is None:
+            self._fail("No manifest loaded")
+            return
+
+        # Manifest may be:
+        #  { "version_id": "...", "generated_at": "...", "files": { "path": {...}, ... } }
+        # or directly:
+        #  { "path": { "version": "...", "sha": "..." }, ... }
+        if isinstance(manifest, dict) and "files" in manifest and isinstance(manifest["files"], dict):
+            files_section = manifest["files"]
+            print("[UPD] Using manifest['files'] for comparison")
+        else:
+            files_section = manifest
+            print("[UPD] Using top-level manifest entries for comparison")
+
         local_versions = self._read_local_versions()
+        pending = []
+        newer = []
 
         print("[UPD] Comparing versions…")
-        pending = []
 
-        for fname, entry in manifest.items():
-            remote = entry.get("version", "?")
-            local = local_versions.get(fname)
+        for fname, entry in files_section.items():
+            if not isinstance(entry, dict):
+                # Skip non-file keys like "generated_at", "manifest_version" if they exist here
+                print(f"[UPD] Skipping non-dict manifest entry: {fname}")
+                continue
 
-            print(f"[UPD] {fname}: local={local} remote={remote}")
+            remote = entry.get("version", None)
+            
+            if remote is None:
+                print(f"[UPD] No 'version' field for {fname} in manifest; skipping")
+                continue
 
-            if local != remote:
-                pending.append(fname)
+            device_path = self._normalize_manifest_path(fname)
+            local = local_versions.get(device_path)
+
+            print(f"[UPD] {fname}: device={device_path} local={local} remote={remote}")
+
+            # Missing locally → needs download
+            if local is None:
+                pending.append(device_path)
+                continue
+
+            try:
+                lv = self._parse_version(local)
+                rv = self._parse_version(remote)
+            except Exception:
+                # If versions are malformed, be conservative
+                pending.append(device_path)
+                continue
+
+            if lv < rv:
+                # Local older → update
+                pending.append(device_path)
+
+            elif lv > rv:
+                # Local newer → warn only
+                newer.append({
+                    "file": device_path,
+                    "local": local,
+                    "remote": remote
+                })
+
+            # else: equal → do nothing
 
         self.ctx["pending"] = pending
+        self.ctx["newer"] = newer
 
         if not self._full_update:
             print("[UPD] CHECK ONLY — pending updates:")
             for f in pending:
                 print("   →", f)
+            if newer:
+                print("[UPD] WARNING: local files newer than manifest:")
+                for n in newer:
+                    print(f"   {n['file']}: local={n['local']} remote={n['remote']}")
             self._phase = self.PHASE_DONE
             return
 
@@ -292,9 +353,7 @@ class Manager(CLBManager):
         temp = fname + ".new"
 
         print(f"[UPD] Requesting download: {fname} → {temp}")
-
         self.mqtt.fetch_file(fname, temp, RANGE, self.source)
-
         self._phase = self.PHASE_WAIT_FILE
 
     # ---------------------------------------------------------
@@ -328,16 +387,16 @@ class Manager(CLBManager):
             os.rename(newfile, filename)
             print(f"[UPD] Installed: {filename}")
         except Exception as e:
-            raise RuntimeError(f"Rename failed: {e}")
+            raise RuntimeError("Rename failed: " + str(e))
 
     # ---------------------------------------------------------
-    # READ VERSIONS (MicroPython safe)
+    # READ VERSIONS (MicroPython safe, full tree)
     # ---------------------------------------------------------
     def _read_local_versions(self):
         versions = {}
         IGNORE = {"__pycache__", ".git", ".vscode"}
 
-        print("[UPD] Scanning local files…")
+        print("[UPD] Scanning local files for version=…")
 
         def scan(path):
             try:
@@ -355,29 +414,67 @@ class Manager(CLBManager):
 
                 mode = st[0]
 
-                # folder?
+                # Directory
                 if mode & 0x4000:
                     if name not in IGNORE:
                         scan(full)
                     continue
 
-                if full.endswith(".py"):
-                    try:
-                        with open(full) as fp:
-                            for line in fp:
-                                if "version" in line and "=" in line:
-                                    ver = line.split("=",1)[1].strip().strip('"\'')
-                                    versions[full] = ver
-                                    print(f"[UPD] Found version: {full} = {ver}")
-                                    break
-                    except:
-                        print("[UPD] Cannot read", full)
+                # Python source file
+                if not full.endswith(".py"):
+                    continue
+
+                try:
+                    with open(full) as fp:
+                        for line in fp:
+                            if "version" in line and "=" in line:
+                                ver = line.split("=", 1)[1].strip().strip('"\'')
+                                norm = self._normalize_fs_path(full)
+
+                                # ONE canonical entry per file
+                                versions[norm] = ver
+
+                                print(f"[UPD] Found version: {norm} = {ver}")
+                                break
+                except Exception as e:
+                    print("[UPD] Cannot read", full, ":", e)
 
         scan(".")
         return versions
 
     # ---------------------------------------------------------
-    # FAIL
+    # PATH NORMALISATION
+    # ---------------------------------------------------------
+    def _normalize_fs_path(self, path: str) -> str:
+        # For paths coming from the Pico filesystem
+        path = path.replace("\\", "/")
+
+        # remove leading ./ and /
+        if path.startswith("./"):
+            path = path[2:]
+        if path.startswith("/"):
+            path = path[1:]
+
+        return path
+
+
+    def _normalize_manifest_path(self, path: str) -> str:
+        # For paths coming from the manifest (repo layout)
+        path = path.replace("\\", "/")
+
+        # manifest paths are typically relative, but be defensive
+        if path.startswith("./"):
+            path = path[2:]
+        if path.startswith("/"):
+            path = path[1:]
+
+        # map repo layout -> device layout
+        if path.startswith("firmware/"):
+            path = path[len("firmware/"):]
+        return path
+
+    # ---------------------------------------------------------
+    # FAIL STATE
     # ---------------------------------------------------------
     def _fail(self, msg):
         print("[UPD] ERROR:", msg)
