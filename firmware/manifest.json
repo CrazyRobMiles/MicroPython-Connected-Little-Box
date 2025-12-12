@@ -1,6 +1,6 @@
 {
   "files": {
-    "firmware/graphics/colours.py": {
+    "firmware/test.py": {
       "version": "0.0.0",
       "version_id": 0,
       "sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -67,9 +67,9 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/umqtt/simple.py"
     },
     "firmware/clb.py": {
-      "version": "1.0.2",
-      "version_id": 10002,
-      "sha": "08f46e49339f63472f5965dbe1641a4bf64b129bcd5372775759712236e9d9ab",
+      "version": "1.0.3",
+      "version_id": 10003,
+      "sha": "53dc7e1a08872de5c6fe06a11a44f85bcb11317b6c8a58e943c15c75e3f54431",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/clb.py"
     },
     "firmware/HullOS/task.py": {
@@ -87,13 +87,13 @@
     "firmware/managers/wifi_manager.py": {
       "version": "1.0.1",
       "version_id": 10001,
-      "sha": "e7ecb73698c804f6b5b08a12d86fd4199142d1713e07b2c87e39735da83ca2fd",
+      "sha": "b8f100e8acf2402bfe37d05236793e960a2e21c8136d86298c24899456437286",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/wifi_manager.py"
     },
     "firmware/managers/clock_manager.py": {
-      "version": "1.0.1",
-      "version_id": 10001,
-      "sha": "8c82baa570864ac8b778a5362523907aa5e202f701b309ec85bec67738018b22",
+      "version": "1.1.0",
+      "version_id": 10100,
+      "sha": "38eb8ca2fbd88095e296c8af47ec2344a9a5f24d3518c0cfd9ddd8d134e0e51a",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/clock_manager.py"
     },
     "firmware/managers/uart_manager.py": {
@@ -127,15 +127,15 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/blink_manager.py"
     },
     "firmware/managers/updater_manager.py": {
-      "version": "3.1.0",
-      "version_id": 30100,
-      "sha": "e999f17ec80ae89ad098313ec98a042f4c4f0cc2e0921bc7b93c26a48180de23",
+      "version": "3.1.1",
+      "version_id": 30101,
+      "sha": "2761139ad5b8f6330809b7c13b3aff6722eee1ebab2edcce866f548db6276f67",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/updater_manager.py"
     },
     "firmware/managers/mqtt_manager.py": {
-      "version": "4.0.0",
-      "version_id": 40000,
-      "sha": "3d9496e92972f0dc134683eb2b8734d423e817fbd16a04d860d14521011ae8a3",
+      "version": "4.0.1",
+      "version_id": 40001,
+      "sha": "82dec8623cd0ae89fac5fcfee32cfc1d6b872e20b9ebf3602a06977b6017b6dd",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/mqtt_manager.py"
     },
     "firmware/managers/stepper_manager.py": {
@@ -151,15 +151,15 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/display_manager.py"
     },
     "firmware/managers/wordsearch_manager.py": {
-      "version": "1.0.1",
-      "version_id": 10001,
-      "sha": "c46d4cf488db0650ee5ef5232f9a62f1b4456352b8cd329da12400a2c377c84b",
+      "version": "1.0.0",
+      "version_id": 10000,
+      "sha": "4def1015ff2ccb64523d7da7cba62e3e9794f574ea9d836f2eb43eaed95dc799",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/wordsearch_manager.py"
     },
     "firmware/managers/base.py": {
       "version": "0.0.0",
       "version_id": 0,
-      "sha": "06fedc4fb4fa6bea4b55af51cb1f424c081734508f6a759d71888023fe0760d7",
+      "sha": "543dfbf23b262274aa6b96bcb05c8ec79f258e7a664486db964ddc152f473e0d",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/managers/base.py"
     },
     "firmware/main.py": {
