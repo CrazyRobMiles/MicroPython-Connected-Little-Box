@@ -48,7 +48,7 @@ jobs:
           SHA=$(sha256sum "$f" | cut -d' ' -f1)
 
           # Raw GitHub URL
-          URL="https://raw.githubusercontent.com/$REPO/main/$FILEPATH"
+          URL="https://raw.githubusercontent.com/$REPO/main/firmware/$FILEPATH"
 
           # Formatting for JSON
           if [ $FIRST -eq 1 ]; then
