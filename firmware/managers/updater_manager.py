@@ -16,9 +16,9 @@ import json
 from managers.base import CLBManager
 from managers.event import Event
 
-MANIFEST_REMOTE = "manifest.json"
-MANIFEST_LOCAL  = "_manifest_tmp.json"
-RANGE = 2000   # chunk size in bytes
+MANIFEST_REMOTE = "manifest.json"          # upstream (server or peer)
+MANIFEST_LOCAL  = "manifest_local.json"    # generated locally
+MANIFEST_TMP    = "_manifest_tmp.json"     # temp download target
 
 
 class Manager(CLBManager):
@@ -121,6 +121,7 @@ class Manager(CLBManager):
     # PROCESS START
     # ---------------------------------------------------------
     def _start_process(self, full_update, fetch_manifest):
+
         if self._phase not in (self.PHASE_IDLE, self.PHASE_DONE, self.PHASE_ERROR):
             print("[UPD] Cannot start — updater busy")
             return
@@ -138,6 +139,8 @@ class Manager(CLBManager):
             "current": None,
         }
 
+        self._build_local_manifest()
+
         if full_update:
             self.events["update.start"].publish({})
         else:
@@ -146,15 +149,14 @@ class Manager(CLBManager):
         self.set_status(5600, "Updater: starting")
 
         if fetch_manifest:
-            print(f"[UPD] Requesting manifest.json (source={self.source})")
-            self.mqtt.fetch_file(MANIFEST_REMOTE, MANIFEST_LOCAL, RANGE, self.source)
+            print(f"[UPD] Requesting {MANIFEST_REMOTE} (source={self.source})")
+            self.mqtt.fetch_file(MANIFEST_REMOTE, MANIFEST_TMP, RANGE, self.source)
             self._phase = self.PHASE_WAIT_MANIFEST
         else:
-            if not os.path.exists(MANIFEST_LOCAL):
-                self._fail("No local manifest available")
+            if not os.path.exists(MANIFEST_REMOTE):
+                self._fail("No cached manifest available")
                 return
-            print("[UPD] Using existing manifest")
-            self._load_manifest()
+            self._load_manifest(MANIFEST_REMOTE)
 
     # ---------------------------------------------------------
     # NON-BLOCKING UPDATE LOOP
@@ -204,8 +206,8 @@ class Manager(CLBManager):
         print(f"[UPD] fetch_complete: {file} → {dest} ({size} bytes)")
 
         # Manifest
-        if dest == MANIFEST_LOCAL and self._phase == self.PHASE_WAIT_MANIFEST:
-            self._load_manifest()
+        if dest == MANIFEST_TMP and self._phase == self.PHASE_WAIT_MANIFEST:
+            self._load_manifest(MANIFEST_TMP)
             return
 
         # File for update
@@ -226,16 +228,15 @@ class Manager(CLBManager):
     # ---------------------------------------------------------
     # MANIFEST LOADING
     # ---------------------------------------------------------
-    def _load_manifest(self):
-        print("[UPD] Reading manifest…")
+    def _load_manifest(self, filename):
+        print(f"[UPD] Reading manifest from {filename}")
         try:
-            with open(MANIFEST_LOCAL) as fp:
+            with open(filename) as fp:
                 self.ctx["manifest"] = json.load(fp)
         except Exception as e:
             self._fail("Manifest parse error: " + str(e))
             return
 
-        print("[UPD] Manifest loaded")
         self._phase = self.PHASE_COMPARE
 
     def _parse_version(self, v):
@@ -279,14 +280,13 @@ class Manager(CLBManager):
                 print(f"[UPD] No 'version' field for {fname} in manifest; skipping")
                 continue
 
-            device_path = self._normalize_manifest_path(fname)
-            local = local_versions.get(device_path)
+            local = local_versions.get(fname)
 
-            print(f"[UPD] {fname}: device={device_path} local={local} remote={remote}")
+            print(f"[UPD] {fname}: device={fname} local={local} remote={remote}")
 
             # Missing locally → needs download
             if local is None:
-                pending.append(device_path)
+                pending.append(fname)
                 continue
 
             try:
@@ -294,17 +294,17 @@ class Manager(CLBManager):
                 rv = self._parse_version(remote)
             except Exception:
                 # If versions are malformed, be conservative
-                pending.append(device_path)
+                pending.append(fname)
                 continue
 
             if lv < rv:
                 # Local older → update
-                pending.append(device_path)
+                pending.append(fname)
 
             elif lv > rv:
                 # Local newer → warn only
                 newer.append({
-                    "file": device_path,
+                    "file": fname,
                     "local": local,
                     "remote": remote
                 })
@@ -389,6 +389,7 @@ class Manager(CLBManager):
         except Exception as e:
             raise RuntimeError("Rename failed: " + str(e))
 
+
     # ---------------------------------------------------------
     # READ VERSIONS (MicroPython safe, full tree)
     # ---------------------------------------------------------
@@ -441,6 +442,21 @@ class Manager(CLBManager):
 
         scan(".")
         return versions
+
+
+    def _build_local_manifest(self):
+        versions = self._read_local_versions()
+        manifest = {"files": {}}
+
+        for path, ver in versions.items():
+            manifest["files"][path] = {"version": ver}
+
+        try:
+            with open(MANIFEST_LOCAL, "w") as fp:
+                json.dump(manifest, fp)
+            print("[UPD] Built manifest_local.json")
+        except Exception as e:
+            self._fail("Failed to write manifest_local.json: " + str(e))
 
     # ---------------------------------------------------------
     # PATH NORMALISATION

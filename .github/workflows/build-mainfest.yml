@@ -33,7 +33,7 @@ jobs:
 
         # Scan all Python files within firmware/
         for f in $(find firmware -type f -name "*.py"); do
-          FILEPATH="$f"
+          FILEPATH="${f#firmware/}"
 
           # Extract version (__version__ preferred)
           VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
@@ -43,12 +43,6 @@ jobs:
           if [ -z "$VERSION" ]; then
             VERSION="0.0.0"
           fi
-
-          # Flatten semantic version → version_id
-          MAJOR=$(echo "$VERSION" | cut -d. -f1)
-          MINOR=$(echo "$VERSION" | cut -d. -f2)
-          PATCH=$(echo "$VERSION" | cut -d. -f3)
-          VERSION_ID=$(( MAJOR*10000 + MINOR*100 + PATCH ))
 
           # Compute SHA256
           SHA=$(sha256sum "$f" | cut -d' ' -f1)
@@ -65,7 +59,6 @@ jobs:
 
           echo "    \"$FILEPATH\": {" >> "$MANIFEST"
           echo "      \"version\": \"$VERSION\"," >> "$MANIFEST"
-          echo "      \"version_id\": $VERSION_ID," >> "$MANIFEST"
           echo "      \"sha\": \"$SHA\"," >> "$MANIFEST"
           echo "      \"url\": \"$URL\"" >> "$MANIFEST"
           echo -n "    }" >> "$MANIFEST"
