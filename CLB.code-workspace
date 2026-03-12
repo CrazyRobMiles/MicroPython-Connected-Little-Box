@@ -1,0 +1,19 @@
+{
+  "folders": [
+    { "name": "Project", "path": "." },
+    { "name": "Firmware","path": "firmware" },
+    { "name":"Resources", "path": "resources" },
+    { "name":"Docs", "path": "docs" }
+  ],
+
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true
+    },
+    "python.languageServer": "Pylance",
+    "python.analysis.diagnosticSeverityOverrides": {
+      "reportMissingModuleSource": "none",
+      "reportShadowedImports": "none"
+    }
+  }
+}

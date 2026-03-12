@@ -1,0 +1,40 @@
+{
+    "wifi": {
+        "wifissid1": "",
+        "enabled": false,
+        "wifipwd1": "",
+        "dependencies": []
+    },
+    "App_Ht16k33_test": {
+        "enabled": true,
+        "i2c_sda": 0,
+        "i2c_clk": 1
+    },
+    "rotary_encoder": {
+        "enabled": true,
+        "encoders": [
+            {
+                "name": "exposure",
+                "clk_pin": 8,
+                "dt_pin": 9,
+                "btn_pin": 16
+            }
+        ],
+        "dependencies": []
+    },
+    "gpio": {
+        "output_pins": [
+        ],
+        "input_pins": [
+            {
+                "debounce_ms": 20,
+                "name": "Shutter",
+                "pin": 22,
+                "pullup":true
+            }
+        ],
+        "default_debounce_ms": 20,
+        "enabled": true,
+        "dependencies": []
+    }
+}

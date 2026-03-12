@@ -1,0 +1,1711 @@
+{
+  "name": "Family Noticeboard",
+  "version": 1,
+  "grid": {
+    "rows": 16,
+    "cols": 16,
+    "letters": [
+      "EIGHTTWOTWELVEEO",
+      "PTSOSNINETEENILN",
+      "AQHENIJSIXTEENEE",
+      "SUSRTEXQPFORTYVN",
+      "TAKIEUEIGHTEENEI",
+      "FRYKXEPNINEESENW",
+      "ITCSEVENTEENTZBT",
+      "FEOTWENTYRERRKLE",
+      "TRNSNINEHEUECVVN",
+      "YDNETOYTTOTOFLEO",
+      "ELEVENCRFRLLEEHF",
+      "KFCENOILACAWTYTF",
+      "ZITNTHAUOHTFFHWL",
+      "EVEITHQWBCITGIJI",
+      "REDPASTWOFKIOHVN",
+      "ONYTHIRTYKEFOURE"
+    ]
+  },
+  "categories": {
+    "names": [],
+    "activities": [],
+    "linking": [],
+    "extras": []
+  },
+  "builtin_categories": {
+    "clock": [
+      "ONE",
+      "TWO",
+      "THREE",
+      "FOUR",
+      "FIVE",
+      "SIX",
+      "SEVEN",
+      "EIGHT",
+      "NINE",
+      "TEN",
+      "ELEVEN",
+      "TWELVE",
+      "ONE",
+      "TWO",
+      "THREE",
+      "FOUR",
+      "FIVE",
+      "SIX",
+      "SEVEN",
+      "EIGHT",
+      "NINE",
+      "TEN",
+      "ELEVEN",
+      "TWELVE",
+      "THIRTEEN",
+      "FOURTEEN",
+      "FIFTEEN",
+      "SIXTEEN",
+      "SEVENTEEN",
+      "EIGHTEEN",
+      "NINETEEN",
+      "TWENTY",
+      "THIRTY",
+      "FORTY",
+      "FIFTY",
+      "QUARTER",
+      "HALF",
+      "QUARTER",
+      "HALF",
+      "PAST",
+      "TO",
+      "OCLOCK",
+      "PAST",
+      "TO",
+      "OCLOCK",
+      "ZERO",
+      "OH",
+      "CONNECTED",
+      "OFFLINE",
+      "SETUP"
+    ],
+    "weather": []
+  },
+  "enabled_categories": {
+    "clock": true,
+    "weather": true,
+    "names": true,
+    "activities": true,
+    "linking": true,
+    "extras": true
+  },
+  "allow_backwards": false,
+  "allow_diagonals": true,
+  "words": [
+    {
+      "word": "CONNECTED",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 6,
+          "col": 2
+        },
+        {
+          "row": 7,
+          "col": 2
+        },
+        {
+          "row": 8,
+          "col": 2
+        },
+        {
+          "row": 9,
+          "col": 2
+        },
+        {
+          "row": 10,
+          "col": 2
+        },
+        {
+          "row": 11,
+          "col": 2
+        },
+        {
+          "row": 12,
+          "col": 2
+        },
+        {
+          "row": 13,
+          "col": 2
+        },
+        {
+          "row": 14,
+          "col": 2
+        }
+      ],
+      "color": [
+        170,
+        0,
+        255
+      ]
+    },
+    {
+      "word": "SEVENTEEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 6,
+          "col": 3
+        },
+        {
+          "row": 6,
+          "col": 4
+        },
+        {
+          "row": 6,
+          "col": 5
+        },
+        {
+          "row": 6,
+          "col": 6
+        },
+        {
+          "row": 6,
+          "col": 7
+        },
+        {
+          "row": 6,
+          "col": 8
+        },
+        {
+          "row": 6,
+          "col": 9
+        },
+        {
+          "row": 6,
+          "col": 10
+        },
+        {
+          "row": 6,
+          "col": 11
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "EIGHTEEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 4,
+          "col": 6
+        },
+        {
+          "row": 4,
+          "col": 7
+        },
+        {
+          "row": 4,
+          "col": 8
+        },
+        {
+          "row": 4,
+          "col": 9
+        },
+        {
+          "row": 4,
+          "col": 10
+        },
+        {
+          "row": 4,
+          "col": 11
+        },
+        {
+          "row": 4,
+          "col": 12
+        },
+        {
+          "row": 4,
+          "col": 13
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "FOURTEEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 10,
+          "col": 8
+        },
+        {
+          "row": 9,
+          "col": 9
+        },
+        {
+          "row": 8,
+          "col": 10
+        },
+        {
+          "row": 7,
+          "col": 11
+        },
+        {
+          "row": 6,
+          "col": 12
+        },
+        {
+          "row": 5,
+          "col": 13
+        },
+        {
+          "row": 4,
+          "col": 14
+        },
+        {
+          "row": 3,
+          "col": 15
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "THIRTEEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 4
+        },
+        {
+          "row": 12,
+          "col": 5
+        },
+        {
+          "row": 11,
+          "col": 6
+        },
+        {
+          "row": 10,
+          "col": 7
+        },
+        {
+          "row": 9,
+          "col": 8
+        },
+        {
+          "row": 8,
+          "col": 9
+        },
+        {
+          "row": 7,
+          "col": 10
+        },
+        {
+          "row": 6,
+          "col": 11
+        }
+      ],
+      "color": [
+        255,
+        0,
+        170
+      ]
+    },
+    {
+      "word": "NINETEEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 1,
+          "col": 5
+        },
+        {
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row": 1,
+          "col": 8
+        },
+        {
+          "row": 1,
+          "col": 9
+        },
+        {
+          "row": 1,
+          "col": 10
+        },
+        {
+          "row": 1,
+          "col": 11
+        },
+        {
+          "row": 1,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "SIXTEEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 2,
+          "col": 7
+        },
+        {
+          "row": 2,
+          "col": 8
+        },
+        {
+          "row": 2,
+          "col": 9
+        },
+        {
+          "row": 2,
+          "col": 10
+        },
+        {
+          "row": 2,
+          "col": 11
+        },
+        {
+          "row": 2,
+          "col": 12
+        },
+        {
+          "row": 2,
+          "col": 13
+        }
+      ],
+      "color": [
+        170,
+        0,
+        255
+      ]
+    },
+    {
+      "word": "FIFTEEN",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 14,
+          "col": 9
+        },
+        {
+          "row": 13,
+          "col": 10
+        },
+        {
+          "row": 12,
+          "col": 11
+        },
+        {
+          "row": 11,
+          "col": 12
+        },
+        {
+          "row": 10,
+          "col": 13
+        },
+        {
+          "row": 9,
+          "col": 14
+        },
+        {
+          "row": 8,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "QUARTER",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 2,
+          "col": 1
+        },
+        {
+          "row": 3,
+          "col": 1
+        },
+        {
+          "row": 4,
+          "col": 1
+        },
+        {
+          "row": 5,
+          "col": 1
+        },
+        {
+          "row": 6,
+          "col": 1
+        },
+        {
+          "row": 7,
+          "col": 1
+        },
+        {
+          "row": 8,
+          "col": 1
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "OFFLINE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 9,
+          "col": 15
+        },
+        {
+          "row": 10,
+          "col": 15
+        },
+        {
+          "row": 11,
+          "col": 15
+        },
+        {
+          "row": 12,
+          "col": 15
+        },
+        {
+          "row": 13,
+          "col": 15
+        },
+        {
+          "row": 14,
+          "col": 15
+        },
+        {
+          "row": 15,
+          "col": 15
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "QUARTER",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 6
+        },
+        {
+          "row": 12,
+          "col": 7
+        },
+        {
+          "row": 11,
+          "col": 8
+        },
+        {
+          "row": 10,
+          "col": 9
+        },
+        {
+          "row": 9,
+          "col": 10
+        },
+        {
+          "row": 8,
+          "col": 11
+        },
+        {
+          "row": 7,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "THIRTY",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 15,
+          "col": 3
+        },
+        {
+          "row": 15,
+          "col": 4
+        },
+        {
+          "row": 15,
+          "col": 5
+        },
+        {
+          "row": 15,
+          "col": 6
+        },
+        {
+          "row": 15,
+          "col": 7
+        },
+        {
+          "row": 15,
+          "col": 8
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "OCLOCK",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 12,
+          "col": 8
+        },
+        {
+          "row": 11,
+          "col": 9
+        },
+        {
+          "row": 10,
+          "col": 10
+        },
+        {
+          "row": 9,
+          "col": 11
+        },
+        {
+          "row": 8,
+          "col": 12
+        },
+        {
+          "row": 7,
+          "col": 13
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "TWENTY",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 7,
+          "col": 3
+        },
+        {
+          "row": 7,
+          "col": 4
+        },
+        {
+          "row": 7,
+          "col": 5
+        },
+        {
+          "row": 7,
+          "col": 6
+        },
+        {
+          "row": 7,
+          "col": 7
+        },
+        {
+          "row": 7,
+          "col": 8
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "TWELVE",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 8
+        },
+        {
+          "row": 0,
+          "col": 9
+        },
+        {
+          "row": 0,
+          "col": 10
+        },
+        {
+          "row": 0,
+          "col": 11
+        },
+        {
+          "row": 0,
+          "col": 12
+        },
+        {
+          "row": 0,
+          "col": 13
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "OCLOCK",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 9,
+          "col": 5
+        },
+        {
+          "row": 10,
+          "col": 6
+        },
+        {
+          "row": 11,
+          "col": 7
+        },
+        {
+          "row": 12,
+          "col": 8
+        },
+        {
+          "row": 13,
+          "col": 9
+        },
+        {
+          "row": 14,
+          "col": 10
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "ELEVEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 10,
+          "col": 0
+        },
+        {
+          "row": 10,
+          "col": 1
+        },
+        {
+          "row": 10,
+          "col": 2
+        },
+        {
+          "row": 10,
+          "col": 3
+        },
+        {
+          "row": 10,
+          "col": 4
+        },
+        {
+          "row": 10,
+          "col": 5
+        }
+      ],
+      "color": [
+        0,
+        255,
+        170
+      ]
+    },
+    {
+      "word": "ELEVEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 14
+        },
+        {
+          "row": 1,
+          "col": 14
+        },
+        {
+          "row": 2,
+          "col": 14
+        },
+        {
+          "row": 3,
+          "col": 14
+        },
+        {
+          "row": 4,
+          "col": 14
+        },
+        {
+          "row": 5,
+          "col": 14
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "TWELVE",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 12,
+          "col": 10
+        },
+        {
+          "row": 11,
+          "col": 11
+        },
+        {
+          "row": 10,
+          "col": 12
+        },
+        {
+          "row": 9,
+          "col": 13
+        },
+        {
+          "row": 8,
+          "col": 14
+        },
+        {
+          "row": 7,
+          "col": 15
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "THREE",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 1,
+          "col": 1
+        },
+        {
+          "row": 2,
+          "col": 2
+        },
+        {
+          "row": 3,
+          "col": 3
+        },
+        {
+          "row": 4,
+          "col": 4
+        },
+        {
+          "row": 5,
+          "col": 5
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "THREE",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 9,
+          "col": 7
+        },
+        {
+          "row": 8,
+          "col": 8
+        },
+        {
+          "row": 7,
+          "col": 9
+        },
+        {
+          "row": 6,
+          "col": 10
+        },
+        {
+          "row": 5,
+          "col": 11
+        }
+      ],
+      "color": [
+        170,
+        0,
+        255
+      ]
+    },
+    {
+      "word": "EIGHT",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 15,
+          "col": 10
+        },
+        {
+          "row": 14,
+          "col": 11
+        },
+        {
+          "row": 13,
+          "col": 12
+        },
+        {
+          "row": 12,
+          "col": 13
+        },
+        {
+          "row": 11,
+          "col": 14
+        }
+      ],
+      "color": [
+        0,
+        255,
+        170
+      ]
+    },
+    {
+      "word": "SETUP",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row": 2,
+          "col": 3
+        },
+        {
+          "row": 3,
+          "col": 4
+        },
+        {
+          "row": 4,
+          "col": 5
+        },
+        {
+          "row": 5,
+          "col": 6
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "SEVEN",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 6,
+          "col": 3
+        },
+        {
+          "row": 6,
+          "col": 4
+        },
+        {
+          "row": 6,
+          "col": 5
+        },
+        {
+          "row": 6,
+          "col": 6
+        },
+        {
+          "row": 6,
+          "col": 7
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "EIGHT",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "FORTY",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 3,
+          "col": 9
+        },
+        {
+          "row": 3,
+          "col": 10
+        },
+        {
+          "row": 3,
+          "col": 11
+        },
+        {
+          "row": 3,
+          "col": 12
+        },
+        {
+          "row": 3,
+          "col": 13
+        }
+      ],
+      "color": [
+        170,
+        255,
+        0
+      ]
+    },
+    {
+      "word": "FIFTY",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 5,
+          "col": 0
+        },
+        {
+          "row": 6,
+          "col": 0
+        },
+        {
+          "row": 7,
+          "col": 0
+        },
+        {
+          "row": 8,
+          "col": 0
+        },
+        {
+          "row": 9,
+          "col": 0
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "SEVEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 8,
+          "col": 3
+        },
+        {
+          "row": 9,
+          "col": 3
+        },
+        {
+          "row": 10,
+          "col": 3
+        },
+        {
+          "row": 11,
+          "col": 3
+        },
+        {
+          "row": 12,
+          "col": 3
+        }
+      ],
+      "color": [
+        255,
+        0,
+        170
+      ]
+    },
+    {
+      "word": "PAST",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 14,
+          "col": 3
+        },
+        {
+          "row": 14,
+          "col": 4
+        },
+        {
+          "row": 14,
+          "col": 5
+        },
+        {
+          "row": 14,
+          "col": 6
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "FIVE",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 12,
+          "col": 12
+        },
+        {
+          "row": 13,
+          "col": 13
+        },
+        {
+          "row": 14,
+          "col": 14
+        },
+        {
+          "row": 15,
+          "col": 15
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "NINE",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 8,
+          "col": 4
+        },
+        {
+          "row": 8,
+          "col": 5
+        },
+        {
+          "row": 8,
+          "col": 6
+        },
+        {
+          "row": 8,
+          "col": 7
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "NINE",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 5,
+          "col": 7
+        },
+        {
+          "row": 5,
+          "col": 8
+        },
+        {
+          "row": 5,
+          "col": 9
+        },
+        {
+          "row": 5,
+          "col": 10
+        }
+      ],
+      "color": [
+        170,
+        170,
+        170
+      ]
+    },
+    {
+      "word": "FIVE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 11,
+          "col": 1
+        },
+        {
+          "row": 12,
+          "col": 1
+        },
+        {
+          "row": 13,
+          "col": 1
+        },
+        {
+          "row": 14,
+          "col": 1
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "PAST",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row": 2,
+          "col": 0
+        },
+        {
+          "row": 3,
+          "col": 0
+        },
+        {
+          "row": 4,
+          "col": 0
+        }
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "FOUR",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 10,
+          "col": 8
+        },
+        {
+          "row": 9,
+          "col": 9
+        },
+        {
+          "row": 8,
+          "col": 10
+        },
+        {
+          "row": 7,
+          "col": 11
+        }
+      ],
+      "color": [
+        85,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "HALF",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 5
+        },
+        {
+          "row": 12,
+          "col": 6
+        },
+        {
+          "row": 11,
+          "col": 7
+        },
+        {
+          "row": 10,
+          "col": 8
+        }
+      ],
+      "color": [
+        255,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "FOUR",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 15,
+          "col": 11
+        },
+        {
+          "row": 15,
+          "col": 12
+        },
+        {
+          "row": 15,
+          "col": 13
+        },
+        {
+          "row": 15,
+          "col": 14
+        }
+      ],
+      "color": [
+        255,
+        0,
+        170
+      ]
+    },
+    {
+      "word": "ZERO",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 12,
+          "col": 0
+        },
+        {
+          "row": 13,
+          "col": 0
+        },
+        {
+          "row": 14,
+          "col": 0
+        },
+        {
+          "row": 15,
+          "col": 0
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "HALF",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 12,
+          "col": 9
+        },
+        {
+          "row": 11,
+          "col": 10
+        },
+        {
+          "row": 10,
+          "col": 11
+        },
+        {
+          "row": 9,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "SIX",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 1,
+          "col": 4
+        },
+        {
+          "row": 2,
+          "col": 5
+        },
+        {
+          "row": 3,
+          "col": 6
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "ONE",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 1,
+          "col": 3
+        },
+        {
+          "row": 2,
+          "col": 4
+        },
+        {
+          "row": 3,
+          "col": 5
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "ONE",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 0,
+          "col": 15
+        },
+        {
+          "row": 1,
+          "col": 15
+        },
+        {
+          "row": 2,
+          "col": 15
+        }
+      ],
+      "color": [
+        85,
+        85,
+        85
+      ]
+    },
+    {
+      "word": "TEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 6,
+          "col": 15
+        },
+        {
+          "row": 7,
+          "col": 15
+        },
+        {
+          "row": 8,
+          "col": 15
+        }
+      ],
+      "color": [
+        255,
+        255,
+        85
+      ]
+    },
+    {
+      "word": "SIX",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 3,
+          "col": 2
+        },
+        {
+          "row": 4,
+          "col": 3
+        },
+        {
+          "row": 5,
+          "col": 4
+        }
+      ],
+      "color": [
+        255,
+        0,
+        170
+      ]
+    },
+    {
+      "word": "TWO",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 14,
+          "col": 6
+        },
+        {
+          "row": 14,
+          "col": 7
+        },
+        {
+          "row": 14,
+          "col": 8
+        }
+      ],
+      "color": [
+        85,
+        255,
+        255
+      ]
+    },
+    {
+      "word": "TWO",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ],
+      "color": [
+        85,
+        85,
+        255
+      ]
+    },
+    {
+      "word": "TEN",
+      "category": "clock",
+      "direction": "S",
+      "cells": [
+        {
+          "row": 9,
+          "col": 4
+        },
+        {
+          "row": 10,
+          "col": 4
+        },
+        {
+          "row": 11,
+          "col": 4
+        }
+      ],
+      "color": [
+        255,
+        170,
+        0
+      ]
+    },
+    {
+      "word": "TO",
+      "category": "clock",
+      "direction": "SE",
+      "cells": [
+        {
+          "row": 13,
+          "col": 11
+        },
+        {
+          "row": 14,
+          "col": 12
+        }
+      ],
+      "color": [
+        255,
+        221,
+        170
+      ]
+    },
+    {
+      "word": "OH",
+      "category": "clock",
+      "direction": "E",
+      "cells": [
+        {
+          "row": 14,
+          "col": 12
+        },
+        {
+          "row": 14,
+          "col": 13
+        }
+      ],
+      "color": [
+        0,
+        170,
+        255
+      ]
+    },
+    {
+      "word": "TO",
+      "category": "clock",
+      "direction": "NE",
+      "cells": [
+        {
+          "row": 12,
+          "col": 4
+        },
+        {
+          "row": 11,
+          "col": 5
+        }
+      ],
+      "color": [
+        0,
+        255,
+        170
+      ]
+    }
+  ],
+  "style": {
+    "letter_pitch_mm": 10,
+    "panel_gap_mm": 0
+  }
+}

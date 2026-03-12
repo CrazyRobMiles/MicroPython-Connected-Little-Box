@@ -1,0 +1,110 @@
+{
+    "pixel": {
+        "panel_width": 16,
+        "animation": "None",
+        "y_panels": 1,
+        "pixeltype": "RGB",
+        "x_panels": 1,
+        "enabled": true,
+        "panel_type": "Alternate-line-panel",
+        "pixelpin": 2,
+        "panel_height": 16
+    },
+    "wifi": {
+        "dependencies": [],
+        "wifipwd1": "",
+        "enabled": true,
+        "retry_interval_ms": 30000,
+        "wifissid1": ""
+    },
+    "dfplayer": {
+        "dependencies": [],
+        "uart_id": "1",
+        "enabled": true,
+        "rx_pin": "5",
+        "volume": "21",
+        "tx_pin": "4"
+    },
+    "gpio": {
+        "dependencies": [],
+        "output_pins": [
+            {
+                "initial_state": 0,
+                "pin": 21,
+                "name": "fake ground"
+            }
+        ],
+        "input_pins": [
+            {
+                "name": "player_status",
+                "debounce_ms": 20,
+                "pin": 11,
+                "pullup": true
+            },
+            {
+                "name": "tilt_switch",
+                "debounce_ms": 20,
+                "pin": 22,
+                "pullup": true
+            },
+            {
+                "name": "up_button",
+                "debounce_ms": 20,
+                "pin": 16,
+                "pullup": true
+            },
+            {
+                "name": "down_button",
+                "debounce_ms": 20,
+                "pin": 20,
+                "pullup": true
+            },
+            {
+                "name": "hour_button",
+                "debounce_ms": 20,
+                "pin": 15,
+                "pullup": true
+            },
+            {
+                "name": "min_button",
+                "debounce_ms": 20,
+                "pin": 10,
+                "pullup": true
+            }
+        ],
+        "default_debounce_ms": 20,
+        "pullup": false,
+        "enabled": true
+    },
+    "clock": {
+        "ntpserver": "pool.ntp.org",
+        "sync_on_start": true,
+        "dependencies": [
+            "wifi"
+        ],
+        "enabled": true,
+        "dst_uk_enabled": true,
+        "dst_uk_delta_minutes": 60,
+        "sync_timeout_ms": 5000,
+        "tz_offset_minutes": 0,
+        "resync_minutes": 180
+    },
+    "App_wordsearch_clock": {
+        "key_repeat_interval_ms": 500,
+        "number_of_audio_tracks": 54,
+        "run_on_power_up": true,
+        "enabled": true,
+        "wordsearch_file": "clockface.json",
+        "wordsearch_letter_delay_ms": 250,
+        "alarm_timeout_ms": 30000,
+        "key_repeat_delay_ms": 1000,
+        "wordsearch_word_delay_ms": 1000,
+        "dependencies": [
+            "clock",
+            "gpio"
+        ],
+        "alarm_sample_interval_ms": 1000,
+        "wordsearch_display_gap_ms": 5000,
+        "alarm_enabled": false
+    }
+}

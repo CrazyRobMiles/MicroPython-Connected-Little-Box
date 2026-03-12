@@ -1,0 +1,51 @@
+{
+    "wifi": {
+        "wifissid1": "",
+        "enabled": false,
+        "wifipwd1": "",
+        "dependencies": []
+    },
+    "App_SX70R_remote": {
+        "enabled": true,
+        "i2c_sda": 0,
+        "i2c_clk": 1
+    },
+    "rotary_encoder": {
+        "enabled": true,
+        "encoders": [
+            {
+                "name": "exposure",
+                "clk_pin": 8,
+                "dt_pin": 9,
+                "btn_pin": 16
+            }
+        ],
+        "dependencies": []
+    },
+    "sx70r": {
+        "enabled": true,
+        "approved_addrs": [],
+        "require_approval": false,
+        "auto_connect": true,
+        "scan_ms": 6000,
+        "preferred_addr": "",
+        "reconnect_backoff_ms": 2000,
+        "debug": true,
+        "dependencies": []
+    },
+    "gpio": {
+        "output_pins": [
+        ],
+        "input_pins": [
+            {
+                "debounce_ms": 20,
+                "name": "Shutter",
+                "pin": 22,
+                "pullup":true
+            }
+        ],
+        "default_debounce_ms": 20,
+        "enabled": true,
+        "dependencies": []
+    }
+}

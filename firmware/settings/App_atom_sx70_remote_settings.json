@@ -1,0 +1,14 @@
+{
+    "App_atom_sx70_remote":
+    {
+        "enabled": true,
+        "approved_addrs": [],
+        "require_approval": false,
+        "auto_connect": true,
+        "scan_ms": 6000,
+        "preferred_addr": "",
+        "reconnect_backoff_ms": 2000,
+        "debug": true,
+        "dependencies": []
+    }
+}

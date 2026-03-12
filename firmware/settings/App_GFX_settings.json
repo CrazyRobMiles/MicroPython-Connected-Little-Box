@@ -1,0 +1,45 @@
+{
+    "wifi": {
+        "wifissid1": "",
+        "enabled": false,
+        "wifipwd1": "",
+        "dependencies": []
+    },
+    "App_GFX_test": {
+        "enabled": true
+    },
+    "gpio": {
+        "output_pins": [
+        ],
+        "input_pins": [
+            {
+                "debounce_ms": 20,
+                "name": "A",
+                "pin": 12
+            },
+            {
+                "debounce_ms": 20,
+                "name": "B",
+                "pin": 13
+            },
+            {
+                "debounce_ms": 20,
+                "name": "C",
+                "pin": 14
+            },
+            {
+                "debounce_ms": 20,
+                "name": "D",
+                "pin": 15
+            },
+            {
+                "debounce_ms": 20,
+                "name": "E",
+                "pin": 22
+            }
+        ],
+        "default_debounce_ms": 20,
+        "enabled": true,
+        "dependencies": []
+    }
+}

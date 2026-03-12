@@ -1,0 +1,78 @@
+name: Build Firmware Manifest
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build_manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Generate manifest.json inside /firmware
+      run: |
+        echo "Generating firmware/manifest.json..."
+
+        # Ensure firmware folder exists (just in case)
+        mkdir -p firmware
+
+        MANIFEST="firmware/manifest.json"
+        REPO="CrazyRobMiles/MicroPython-Connected-Little-Box"
+
+        echo "{" > "$MANIFEST"
+        echo '  "files": {' >> "$MANIFEST"
+
+        FIRST=1
+
+        # Scan all Python files within firmware/
+        for f in $(find firmware -type f -name "*.py"); do
+          FILEPATH="${f#firmware/}"
+
+          # Extract version (__version__ preferred)
+          VERSION=$(grep -Eo '__version__ *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
+          if [ -z "$VERSION" ]; then
+            VERSION=$(grep -Eo 'version *= *"[^"]+"' "$f" | head -n 1 | cut -d'"' -f2)
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION="0.0.0"
+          fi
+
+          # Compute SHA256
+          SHA=$(sha256sum "$f" | cut -d' ' -f1)
+
+          # Raw GitHub URL
+          URL="https://raw.githubusercontent.com/$REPO/main/firmware/$FILEPATH"
+
+          # Formatting for JSON
+          if [ $FIRST -eq 1 ]; then
+            FIRST=0
+          else
+            echo ',' >> "$MANIFEST"
+          fi
+
+          echo "    \"$FILEPATH\": {" >> "$MANIFEST"
+          echo "      \"version\": \"$VERSION\"," >> "$MANIFEST"
+          echo "      \"sha\": \"$SHA\"," >> "$MANIFEST"
+          echo "      \"url\": \"$URL\"" >> "$MANIFEST"
+          echo -n "    }" >> "$MANIFEST"
+        done
+
+        echo "" >> "$MANIFEST"
+        echo "  }" >> "$MANIFEST"
+        echo "}" >> "$MANIFEST"
+
+        echo "Manifest written to $MANIFEST"
+        cat "$MANIFEST"
+
+    - name: Commit and push manifest.json
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-generated firmware manifest.json"
+        file_pattern: "firmware/manifest.json"

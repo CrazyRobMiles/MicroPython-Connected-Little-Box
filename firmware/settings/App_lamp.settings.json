@@ -1,0 +1,69 @@
+{
+    "uart": {
+        "enabled": false,
+        "dependencies": [],
+        "_comment": "No dependencies"
+    },
+    "pixel": {
+        "y_panels": 1,
+        "animation": "None",
+        "panel_width": 8,
+        "pixeltype": "RGB",
+        "x_panels": 1,
+        "enabled": true,
+        "panel_type": "Multi-panels-x",
+        "brightness": 1.0,
+        "pixelpin": 18,
+        "panel_height": 8,
+        "dependencies": []
+    },
+    "gpio": {
+        "output_pins": [
+            {
+                "initial_state": 0,
+                "name": "led1",
+                "pin": 16
+            }
+        ],
+        "input_pins": [
+            {
+                "debounce_ms": 20,
+                "name": "button1",
+                "pin": 14
+            }
+        ],
+        "default_debounce_ms": 20,
+        "enabled": true,
+        "dependencies": []
+    },
+    "rotary_encoder": {
+        "enabled": true,
+        "encoders": [
+            {
+                "name": "color",
+                "clk_pin": 13,
+                "dt_pin": 12,
+                "btn_pin": 16
+            },
+            {
+                "name": "brightness",
+                "clk_pin": 11,
+                "dt_pin": 10,
+                "btn_pin": 17
+            }
+        ],
+        "dependencies": []
+    },
+    "App_lamp": {
+        "enabled": true,
+        "default_red": 255,
+        "default_green": 255,
+        "default_blue": 255,
+        "default_brightness": 1.0,
+        "color_encoder_name": "color",
+        "brightness_encoder_name": "brightness",
+        "brightness_step": 0.05,
+        "color_hue_step": 5,
+        "dependencies": ["pixel", "rotary_encoder"]
+    }
+}
