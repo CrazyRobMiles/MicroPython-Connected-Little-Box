@@ -11,6 +11,13 @@ class CLBManager:
     STATE_ERROR = "error"
     STATE_WAITING = "waiting"
 
+    @classmethod
+    def get_manager_name(cls):
+        name = cls.__module__.split(".")[-1]
+        if name.endswith("_manager"):
+            name = name[:-8]
+        return name
+
     def unresolved_dependencies(self):
         return [m for m in self.dependency_instances if not hasattr(m, 'state') or m.state != self.STATE_OK]
    

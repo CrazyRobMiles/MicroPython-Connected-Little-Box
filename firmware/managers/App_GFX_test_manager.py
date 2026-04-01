@@ -10,7 +10,9 @@ import sys
 
 class Manager(CLBManager):
     version = "1.0.2"
-
+    name = "Pimoroni GFX Display test application"
+    file = "App_GFX_test_manager"
+    desc =  "Tests the display and buttons for a Pimoroni display"
 
     def __init__(self, clb):
         super().__init__(clb, defaults={

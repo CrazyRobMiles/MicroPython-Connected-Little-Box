@@ -11,6 +11,9 @@ import time
 
 class Manager(CLBManager):
     version = "1.0.1"
+    name = "SX70 Remote Control "
+    file = "App_SX70R_remote_manager"
+    desc = "Polaroid SX70 remote control including shutter speed and self timer delay settings"
 
     def __init__(self, clb):
         super().__init__(clb, defaults={

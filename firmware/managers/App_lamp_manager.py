@@ -3,6 +3,9 @@ from managers.base_manager import CLBManager
 
 class Manager(CLBManager):
     version = "1.0.0"
+    name = "HT16K33 display test application"
+    file = "App_Ht16k33_test_manager"
+    desc = "Tests an HT16k33 display"
 
     def __init__(self, clb):
         super().__init__(clb, defaults={

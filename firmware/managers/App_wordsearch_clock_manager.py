@@ -26,8 +26,8 @@ class Manager(CLBManager):
     ALARM_OFF_BACKGROUND_COLOUR=(255,255,10)
     ALARM_TEXT_COLOUR=(20,20,20)
     
-    MESSAGE_ALARM_ON=2
-    MESSAGE_ALARM_OFF=1
+    MESSAGE_ALARM_ON=1
+    MESSAGE_ALARM_OFF=2
     
     def __init__(self,clb):
         super().__init__(clb,defaults={
@@ -36,12 +36,12 @@ class Manager(CLBManager):
             "wordsearch_word_delay_ms":1000,
             "wordsearch_display_gap_ms":5000,
             "run_on_power_up":True,
-            "alarm_enabled": False,
             "alarm_timeout_ms":30000,
             "alarm_sample_interval_ms":1000,
             "key_repeat_delay_ms":500,
             "key_repeat_interval_ms":333,
-            "number_of_audio_tracks":10
+            "start_audio_track_no":3,
+            "end_audio_track_no":20
         })
         self.show_state = self.SHOW_INACTIVE
         self.pixel = None
@@ -196,7 +196,8 @@ class Manager(CLBManager):
         self.alarm_sample_interval_ms =  int(self.settings.get("alarm_sample_interval_ms", 1000))
         self.key_repeat_delay_ms = int(self.settings.get("key_repeat_delay_ms", 500))
         self.key_repeat_interval_ms = int(self.settings.get("key_repeat_interval_ms", 500))
-        self.number_of_audio_tracks = int(self.settings.get("number_of_audio_tracks", 10))
+        self.start_audio_track_no = int(self.settings.get("start_audio_track_no", 3))
+        self.end_audio_track_no = int(self.settings.get("end_audio_track_no", 20))
         self.alarm_settings=ClockSettingsStore()
         self.alarm_settings.load()
 
@@ -349,7 +350,7 @@ class Manager(CLBManager):
     def play_alarm_sample(self):
         print("Playing alarm sample")
         # First two samples are alarm on and alarm off
-        self.dfplayer.play(random.randint(3,self.number_of_audio_tracks))
+        self.dfplayer.play(random.randint(self.start_audio_track_no,self.end_audio_track_no))
     
     def start_alarm_playback_gap(self):
         print("starting alarm playback gap")

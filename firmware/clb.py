@@ -3,6 +3,8 @@ import json
 import sys
 import select
 import time
+import machine
+from app_manifest import APPS
 
 class CLB:
 
@@ -213,7 +215,9 @@ class CLB:
             "rebuild-iface": ("Rebuild unified interface registry", self.build_interface),
             "events": ("List all events and subscribers", self.command_list_events),
             "memory": ("Show memory status",self.show_memory_status),
-            "exec": ("Executes Python statement", self.execute_python_statement)
+            "exec": ("Executes Python statement", self.execute_python_statement),
+            "apps": ("Lists all the applications", self.show_applications),
+            "select-app" : ("Select an application for this device",self.select_application)
         }
 
     def update(self):
@@ -722,6 +726,59 @@ class CLB:
     def execute_python_statement(self,statement):
         print(f"Executing: {statement}")
         exec(statement)
+
+    def show_applications(self):
+        print("Applications Available:")
+        for app in APPS:
+            name=app["name"]
+            desc=app["desc"]
+            print(f"   {name} - {desc}")
+            
+    def find_app_by_prefix(self,items, key):
+        return next((item for item in items if item["name"].startswith(key)), None)            
+    
+    def get_manager_class(self, manager_name):
+        module_name = f"managers.{manager_name}_manager"
+
+        module = __import__(module_name)
+        for part in module_name.split(".")[1:]:
+            module = getattr(module, part)
+
+        return getattr(module, "Manager")
+
+    def configure_app_settings(self, app):
+        name=app["name"]
+        desc=app["desc"]
+        file=app["file"]
+        
+        print(f"Configuring: {name} - {desc}")
+        ok = input("Configuring this will erase any existing settings. Enter Y to continue, N to abandon: ")
+        if ok == "Y":
+            print("Performing configuration selection")
+            mgr = self.get_manager_class(file)
+            defaults = mgr.default_settings
+            print(defaults)
+            self.config.settings = defaults
+            self.settings = defaults
+            self.config.save()
+            print("Configuration updated")
+            print("Device will reset in five seconds")
+            for i in range(5):
+                print(f"....{i}")
+                time.sleep(1)
+            print("Reset")
+            machine.reset()
+        else:
+            print("Configuration abandoned")
+    
+    def select_application(self):
+        self.show_applications()
+        name= input ("Enter the name of the app:")
+        app = self.find_app_by_prefix(APPS,name)
+        if app==None:
+            print(f"Name {name} not found")
+        else:
+            self.configure_app_settings(app)
         
     def call(self, name, *args):
         """Invoke a command/service by name."""

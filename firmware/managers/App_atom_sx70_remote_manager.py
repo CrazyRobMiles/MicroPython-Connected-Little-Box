@@ -107,6 +107,25 @@ def _adv_decode_name(adv_data):
 
 class Manager(CLBManager):
     version = "0.2.0"
+    
+    name = "Atom SX70 Remote Manager"
+    file = "App_atom_sx70_remote_manager"
+    desc =  "Polaroid SX70 remote control for M5Stack Atom or similar with Colour Display and button."
+    
+    default_settings =  {
+    "App_atom_sx70_remote":
+    {
+        "enabled": True,
+        "approved_addrs": [],
+        "require_approval": False,
+        "auto_connect": True,
+        "scan_ms": 6000,
+        "preferred_addr": "",
+        "reconnect_backoff_ms": 2000,
+        "debug": True,
+        "dependencies": []
+    }
+}    
 
     STATE_IDLE        = "idle"
     STATE_SCANNING    = "scanning"

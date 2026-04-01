@@ -1,121 +1,99 @@
 {
-    "pixel": {
-        "panel_width": 16,
-        "animation": "None",
-        "y_panels": 1,
-        "pixeltype": "RGB",
-        "x_panels": 1,
+    "pca9685": {
+        "pwm_frequency": 50,
+        "move_on_setup": true,
+        "i2c_bus": 0,
+        "orchestrations": {},
+        "pulse_max_us": 2500,
+        "i2c_sda_pin": 4,
+        "pulse_min_us": 500,
+        "address": 64,
         "enabled": true,
-        "panel_type": "Alternate-line-panel",
-        "pixelpin": 2,
-        "panel_height": 16
-    },
-    "tilt": {
-        "pulse_max_ms": 2500,
-        "max_intertap_ms": 700,
-        "src_gpio": "tilt",
-        "hold_ms": 701,
-        "end_gap_ms": 800,
-        "rest_calibrate_ms": 2000,
-        "pulse_min_ms": 150,
-        "long_ms": 1000,
-        "enabled": true
-    },
-    "wifi": {
         "dependencies": [],
-        "wifipwd1": "",
+        "i2c_scl_pin": 5,
         "enabled": true,
-        "retry_interval_ms": 30000,
-        "wifissid1": ""
-    },
-    "dfplayer": {
         "dependencies": [],
-        "uart_id": "1",
-        "enabled": true,
-        "rx_pin": "5",
-        "volume": "21",
-        "tx_pin": "4"
-    },
-    "gpio": {
-        "dependencies": [],
-        "output_pins": [
+        "servos": [
             {
-                "initial_state": 0,
-                "pin": 21,
-                "name": "led1"
+                "channel": 0,
+                "name": "eyes.lr",
+                "start": -30,
+                "reset": 10,
+                "stop": 40,
+                "position": 0.5
+            },
+            {
+                "channel": 1,
+                "name": "eyes.ud",
+                "start": -70,
+                "reset": -30,
+                "stop": 10,
+                "position": 0.5
+            },
+            {
+                "channel": 2,
+                "name": "left.upperlid",
+                "start": 25,
+                "reset": -50,
+                "stop": -70,
+                "position": 0.5
+            },
+            {
+                "channel": 3,
+                "name": "left.lowerlid",
+                "start": -5,
+                "reset": 30,
+                "stop": 45,
+                "position": 0.5
+            },
+            {
+                "channel": 4,
+                "name": "right.upperlid",
+                "start": -25,
+                "reset": 20,
+                "stop": 40,
+                "position": 0.5
+            },
+            {
+                "channel": 5,
+                "name": "right.lowerlid",
+                "start": 55,
+                "reset": 20,
+                "stop": -12,
+                "position": 0.5
             }
-        ],
-        "input_pins": [
-            {
-                "name": "player_status",
-                "debounce_ms": 20,
-                "pin": 11,
-                "pullup": true
+        ]
+    },
+    "eye": {
+        "enabled": true,
+        "centre_x": 0.5,
+        "centre_y": 0.5,
+        "normal_open": 0.5,
+        "blink_closed_open": 0.0,
+        "blink_close_ms": 70,
+        "blink_hold_ms": 25,
+        "blink_open_ms": 90,
+        "default_move_ms": 100,
+        "idle_animation": true,
+        "orchestrations": {
+            "centre": {
+                "type": "pose",
+                "x": 0.5,
+                "y": 0.5,
+                "open": 0.5,
+                "duration_ms": 120
             },
-            {
-                "name": "tilt_switch",
-                "debounce_ms": 20,
-                "pin": 22,
-                "pullup": true
+            "wide": {
+                "type": "pose",
+                "open": 1.0,
+                "duration_ms": 120
             },
-            {
-                "name": "up_button",
-                "debounce_ms": 20,
-                "pin": 16,
-                "pullup": true
-            },
-            {
-                "name": "down_button",
-                "debounce_ms": 20,
-                "pin": 20,
-                "pullup": true
-            },
-            {
-                "name": "hour_button",
-                "debounce_ms": 20,
-                "pin": 15,
-                "pullup": true
-            },
-            {
-                "name": "min_button",
-                "debounce_ms": 20,
-                "pin": 10,
-                "pullup": true
+            "blink_fast": {
+                "type": "blink",
+                "blink_close_ms": 45,
+                "blink_hold_ms": 15,
+                "blink_open_ms": 60
             }
-        ],
-        "default_debounce_ms": 20,
-        "pullup": false,
-        "enabled": true
-    },
-    "clock": {
-        "ntpserver": "pool.ntp.org",
-        "sync_on_start": true,
-        "dependencies": [
-            "wifi"
-        ],
-        "enabled": true,
-        "dst_uk_enabled": true,
-        "dst_uk_delta_minutes": 60,
-        "sync_timeout_ms": 5000,
-        "tz_offset_minutes": 0,
-        "resync_minutes": 180
-    },
-    "App_wordsearch_alarmclock": {
-        "key_repeat_interval_ms": 500,
-        "number_of_audio_tracks": 54,
-        "run_on_power_up": true,
-        "enabled": true,
-        "wordsearch_file": "Clock.json",
-        "wordsearch_letter_delay_ms": 250,
-        "alarm_timeout_ms": 30000,
-        "key_repeat_delay_ms": 1000,
-        "wordsearch_word_delay_ms": 1000,
-        "dependencies": [
-            "clock",
-            "gpio"
-        ],
-        "alarm_sample_interval_ms": 1000,
-        "wordsearch_display_gap_ms": 5000,
-        "alarm_enabled": false
+        }
     }
 }
