@@ -31,7 +31,7 @@
 #   camera.exposure_finished
 #   camera.error
 #
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 
 import bluetooth
@@ -103,8 +103,19 @@ def _adv_decode_name(adv_data):
     return None
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "0.2.0"
+
+    device_default_settings = {
+        "enabled": True,
+        "auto_connect": True,
+        "scan_ms": 6000,
+        "reconnect_backoff_ms": 2000,
+        "approved_addrs": [],
+        "preferred_addr": "",
+        "require_approval": True,
+        "debug": True,
+    }
 
     STATE_IDLE        = "idle"
     STATE_SCANNING    = "scanning"
@@ -114,22 +125,7 @@ class Manager(CLBManager):
     STATE_DISABLED    = "disabled"
 
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "enabled": True,
-
-            # Behaviour
-            "auto_connect": True,
-            "scan_ms": 6000,
-            "reconnect_backoff_ms": 2000,
-
-            # Registration / selection
-            "approved_addrs": [],      # list of "AA:BB:CC:DD:EE:FF"
-            "preferred_addr": "",      # optional "AA:BB:..."
-            "require_approval": True,  # if True, connect only to approved/preferred devices
-
-            # Debug
-            "debug": True,
-        })
+        super().__init__(clb)
 
         self.ble = bluetooth.BLE()
         self.ble.active(True)

@@ -9,10 +9,15 @@ Manages the HullOS task scheduler for cooperative multitasking support.
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
 | `enabled` | bool | false | Enable/disable HullOS task scheduling |
+| `default_program` | string | "default.pyish" | Filename of the program to run on power-up |
+| `program_folder` | string | "/HullOS/code" | Folder on the device where `.pyish` programs are stored |
+| `run on power up` | bool | true | Whether to automatically start `default_program` on boot |
 
 ## Services (Commands)
 
-This manager provides task scheduling and management services.
+| Service | Description |
+|---------|-------------|
+| `start <name> <file>` | Start a named task by loading `<file>` from the program folder |
 
 ## Events
 

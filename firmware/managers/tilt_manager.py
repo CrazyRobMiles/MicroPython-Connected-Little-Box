@@ -1,24 +1,24 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import time
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.1.0"
 
+    device_default_settings = {
+        "src_gpio": "tilt",
+        "rest_calibrate_ms": 2000,
+        "hold_ms": 700,
+        "pulse_min_ms": 150,
+        "pulse_max_ms": 2500,
+        "long_ms": 1000,
+        "max_intertap_ms": 700,
+        "end_gap_ms": 800,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "src_gpio": "tilt",          # expects gpio.tilt_high / gpio.tilt_low
-            "rest_calibrate_ms": 2000,   # latch rest state after this long with no transitions
-
-            "hold_ms": 700,              # tipped fires after this long away from rest
-            "pulse_min_ms": 150,
-            "pulse_max_ms": 2500,
-            "long_ms": 1000,
-
-            "max_intertap_ms": 700,      # max gap between pulse ENDS for same sequence
-            "end_gap_ms": 800,           # publish sequence after this gap since last pulse end
-        })
+        super().__init__(clb)
 
         self.event_manager = None
         self.events = {}

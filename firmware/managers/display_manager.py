@@ -1,5 +1,5 @@
 # /managers/display_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 from graphics.display_devices import LCDDisplay,EInkDisplay,Ht16k33_14Seg
 import sys
@@ -8,17 +8,18 @@ import sys
 # CLB Manager
 # --------------------------------------------------------------------
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.2"
 
+    device_default_settings = {
+        "enabled": True,
+        "type": "lcd",
+        "font": "bitmap8",
+        "text_scale": 2,
+    }
 
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "enabled": True,
-            "type": "lcd",      # lcd | eink | HT16K33
-            "font": "bitmap8",
-            "text_scale": 2,
-        })
+        super().__init__(clb)
 
         self.display = None
         self.items = {}        # holds DisplayItem objects for other managers

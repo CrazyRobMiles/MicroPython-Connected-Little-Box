@@ -1,5 +1,5 @@
 # /managers/display_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 from managers.event import Event
 from graphics.display_devices import GFX_LCDDisplay, DisplayItem
 import sys
@@ -68,17 +68,19 @@ class PersonSensor():
         return faces
         
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.2"
 
     STATE_DISABLED = "disabled"
     STATE_IDLE     = "idle"
 
+    app_default_settings = {
+        "active": True,
+        "sensitivity": 5,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "active":True,
-            "sensitivity":5
-        })
+        super().__init__(clb)
         self.state = self.STATE_IDLE
         self.personSensor = None
 

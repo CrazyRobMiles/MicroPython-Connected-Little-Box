@@ -1,4 +1,4 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 import machine, math, time, sys
 
 # NEW: cross-platform hardware abstraction layer
@@ -11,7 +11,7 @@ from compat import (
 
 # ======== CROSS-PLATFORM, TIMER-DRIVEN STEPPER MANAGER ========
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     """
     Drives 1–4 x 28BYJ-48 steppers via ULN2003 (4 pins each) using an 8-step half-step sequence.
     - Uses compat.py to support both Pico (rp2) and ESP32 reliably.
@@ -38,25 +38,26 @@ class Manager(CLBManager):
         (1,0,0,1),
     )
 
+    device_default_settings = {
+        “motors”: [
+            {“pins”: [-1,-1,-1,-1], “wheel_diameter_mm”: 69.0},
+            {“pins”: [-1,-1,-1,-1], “wheel_diameter_mm”: 69.0},
+            {“pins”: [-1,-1,-1,-1], “wheel_diameter_mm”: 69.0},
+            {“pins”: [-1,-1,-1,-1], “wheel_diameter_mm”: 69.0},
+        ],
+        “wheel_spacing_mm”: 110.0,
+        “steps_per_rev”: 4096,
+        “min_step_delay_us”: 1200,
+        “enabled”: False,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            # Up to four motors; -1 pins mean “unused motor”
-            "motors": [
-                {"pins":[-1,-1,-1,-1], "wheel_diameter_mm":69.0},  # motor 0: left
-                {"pins":[-1,-1,-1,-1], "wheel_diameter_mm":69.0},  # motor 1: right
-                {"pins":[-1,-1,-1,-1], "wheel_diameter_mm":69.0},  # optional
-                {"pins":[-1,-1,-1,-1], "wheel_diameter_mm":69.0},  # optional
-            ],
-            "wheel_spacing_mm": 110.0,      # centre-to-centre distance
-            "steps_per_rev":    4096,       # half-step count for 28BYJ-48
-            "min_step_delay_us": 1200,      # fastest step interval
-            "enabled":          False
-        })
-        self._m = []          # runtime motor data
+        super().__init__(clb)
+        self._m = []
         self._timer = None
-        self._tick_us = 200    # target tick (compat adjusts on ESP32)
+        self._tick_us = 200
         self._moving_any = False
-        self._last_interval_us = int(self.defaults["min_step_delay_us"])
+        self._last_interval_us = int(self.device_default_settings[“min_step_delay_us”])
 
     # ---------- Lifecycle ----------
 

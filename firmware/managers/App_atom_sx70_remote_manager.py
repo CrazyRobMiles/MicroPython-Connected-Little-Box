@@ -31,7 +31,7 @@
 #   camera.exposure_finished
 #   camera.error
 #
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 from managers.event import Event
 
 import bluetooth
@@ -105,14 +105,14 @@ def _adv_decode_name(adv_data):
     return None
 
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "0.2.0"
-    
+
     name = "Atom SX70 Remote Manager"
-    file = "App_atom_sx70_remote_manager"
+    file = "App_atom_sx70_remote"
     desc =  "Polaroid SX70 remote control for M5Stack Atom or similar with Colour Display and button."
-    
-    default_settings =  {
+
+    app_default_settings =  {
     "App_atom_sx70_remote":
     {
         "enabled": True,
@@ -135,22 +135,7 @@ class Manager(CLBManager):
     STATE_DISABLED    = "disabled"
 
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "enabled": True,
-
-            # Behaviour
-            "auto_connect": True,
-            "scan_ms": 6000,
-            "reconnect_backoff_ms": 2000,
-
-            # Registration / selection
-            "approved_addrs": [],      # list of "AA:BB:CC:DD:EE:FF"
-            "preferred_addr": "",      # optional "AA:BB:..."
-            "require_approval": True,  # if True, connect only to approved/preferred devices
-
-            # Debug
-            "debug": True,
-        })
+        super().__init__(clb)
 
         self.ble = bluetooth.BLE()
         self.ble.active(True)

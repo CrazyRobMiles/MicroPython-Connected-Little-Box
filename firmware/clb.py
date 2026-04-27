@@ -756,7 +756,7 @@ class CLB:
         if ok == "Y":
             print("Performing configuration selection")
             mgr = self.get_manager_class(file)
-            defaults = mgr.default_settings
+            defaults = mgr.app_default_settings
             print(defaults)
             self.config.settings = defaults
             self.settings = defaults

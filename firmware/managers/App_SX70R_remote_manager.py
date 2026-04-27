@@ -1,5 +1,5 @@
 # /managers/display_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 from managers.event import Event
 from graphics.display_devices import Ht16k33_14Seg, DisplayItem
 import sys
@@ -9,18 +9,46 @@ import time
 # CLB Manager
 # --------------------------------------------------------------------
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.1"
     name = "SX70 Remote Control "
-    file = "App_SX70R_remote_manager"
+    file = "App_SX70R_remote"
     desc = "Polaroid SX70 remote control including shutter speed and self timer delay settings"
 
-    def __init__(self, clb):
-        super().__init__(clb, defaults={
+    app_default_settings = {
+        "sx70r": {
+            "enabled": True,
+            "auto_connect": True,
+            "scan_ms": 6000,
+            "reconnect_backoff_ms": 2000,
+            "approved_addrs": [],
+            "preferred_addr": "",
+            "require_approval": False,
+            "debug": False
+        },
+        "gpio": {
+            "enabled": True,
+            "input_pins": [{"name": "Shutter", "pin": 14}],
+            "output_pins": [],
+            "default_debounce_ms": 20,
+            "pullup": True
+        },
+        "rotary_encoder": {
+            "enabled": True,
+            "encoders": [
+                {"name": "exposure", "clk_pin": 16, "dt_pin": 17, "btn_pin": 15}
+            ]
+        },
+        "App_SX70R_remote": {
             "enabled": True,
             "i2c_sda": 0,
-            "i2c_clk": 1
-        })
+            "i2c_clk": 1,
+            "dependencies": ["sx70r", "gpio", "rotary_encoder"]
+        }
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
 
         self.display = None
         self.events = {}

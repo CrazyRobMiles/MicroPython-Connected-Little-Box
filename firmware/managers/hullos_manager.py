@@ -1,4 +1,4 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 import time
 import math
 import random
@@ -8,15 +8,17 @@ import os
 from HullOS.task import Task
 from HullOS.engine import Engine
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.1"
 
-    def __init__(self,clb):
-        super().__init__(clb,defaults={
-            "default_program": "default.pyish",
-            "program_folder":"/HullOS/code",
-            "run on power up":True
-        })
+    device_default_settings = {
+        "default_program": "default.pyish",
+        "program_folder": "/HullOS/code",
+        "run on power up": True,
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
         self.engine = Engine(clb)
         self.first_run = True
 

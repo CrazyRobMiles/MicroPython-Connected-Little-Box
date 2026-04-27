@@ -1,16 +1,18 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import machine
 import time
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.0"
 
+    device_default_settings = {
+        "encoders": [],
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "encoders": []
-        })
+        super().__init__(clb)
         self.encoders = {}  # {encoder_name: EncoderHandler}
         self.events = {}    # {event_name: Event object}
 

@@ -1,5 +1,5 @@
 # /managers/display_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 from managers.event import Event
 from graphics.display_devices import GFX_LCDDisplay, DisplayItem
 import sys
@@ -8,16 +8,28 @@ import sys
 # CLB Manager
 # --------------------------------------------------------------------
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.2"
     name = "Pimoroni GFX Display test application"
-    file = "App_GFX_test_manager"
-    desc =  "Tests the display and buttons for a Pimoroni display"
+    file = "App_GFX_test"
+    desc = "Tests the display and buttons for a Pimoroni display"
+
+    app_default_settings = {
+        "gpio": {
+            "enabled": True,
+            "input_pins": [{"name": "A", "pin": 12}],
+            "output_pins": [],
+            "default_debounce_ms": 20,
+            "pullup": True
+        },
+        "App_GFX_test": {
+            "enabled": True,
+            "dependencies": ["gpio"]
+        }
+    }
 
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "enabled": True,
-        })
+        super().__init__(clb)
 
         self.display = None
         self.items = {}        # holds DisplayItem objects for other managers

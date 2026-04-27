@@ -1,10 +1,10 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import random
 import time
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "0.2.0"
     dependencies = ["pca9685"]
 
@@ -17,28 +17,30 @@ class Manager(CLBManager):
         "right.lowerlid",
     )
 
+    device_default_settings = {
+        "centre_x": 0.5,
+        "centre_y": 0.5,
+        "normal_open": 0.5,
+        "blink_closed_open": 0.0,
+        "blink_close_ms": 70,
+        "blink_hold_ms": 25,
+        "blink_open_ms": 90,
+        "default_move_ms": 100,
+        "orchestrations": {},
+        "idle_animation": False,
+        "idle_min_gap_ms": 1500,
+        "idle_max_gap_ms": 5000,
+        "idle_blink_chance": 0.35,
+        "idle_saccade_min_ms": 50,
+        "idle_saccade_max_ms": 140,
+        "idle_return_chance": 0.35,
+        "idle_max_offset_x": 0.35,
+        "idle_max_offset_y": 0.25,
+        "idle_open_jitter": 0.0,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "centre_x": 0.5,
-            "centre_y": 0.5,
-            "normal_open": 0.5,
-            "blink_closed_open": 0.0,
-            "blink_close_ms": 70,
-            "blink_hold_ms": 25,
-            "blink_open_ms": 90,
-            "default_move_ms": 100,
-            "orchestrations": {},
-            "idle_animation": False,
-            "idle_min_gap_ms": 1500,
-            "idle_max_gap_ms": 5000,
-            "idle_blink_chance": 0.35,
-            "idle_saccade_min_ms": 50,
-            "idle_saccade_max_ms": 140,
-            "idle_return_chance": 0.35,
-            "idle_max_offset_x": 0.35,
-            "idle_max_offset_y": 0.25,
-            "idle_open_jitter": 0.0,
-        })
+        super().__init__(clb)
         self.servo = None
         self.pose = {
             "x": 0.5,

@@ -1,4 +1,4 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import sys
 import time
@@ -68,12 +68,25 @@ class _PCA9685:
         return ticks
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.2.0"
     dependencies = []
 
+    device_default_settings = {
+        "i2c_bus": 0,
+        "i2c_sda_pin": 4,
+        "i2c_scl_pin": 5,
+        "address": 0x40,
+        "pwm_frequency": 50,
+        "pulse_min_us": 500,
+        "pulse_max_us": 2500,
+        "move_on_setup": True,
+        "orchestrations": {},
+        "servos": [],
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults=self._build_defaults())
+        super().__init__(clb)
         self.i2c = None
         self.driver = None
         self._runtime = {}
@@ -127,20 +140,6 @@ class Manager(CLBManager):
                 "Published when an orchestration fails.",
                 self,
             ),
-        }
-
-    def _build_defaults(self):
-        return {
-            "i2c_bus": 0,
-            "i2c_sda_pin": 4,
-            "i2c_scl_pin": 5,
-            "address": 0x40,
-            "pwm_frequency": 50,
-            "pulse_min_us": 500,
-            "pulse_max_us": 2500,
-            "move_on_setup": True,
-            "orchestrations": {},
-            "servos": [],
         }
 
     def setup(self, settings):

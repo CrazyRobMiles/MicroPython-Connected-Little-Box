@@ -19,7 +19,7 @@ The Connected Little Boxes framework is a **cooperative** multi tasking environm
 
 # 📘 1. What Is a Manager?
 
-A **manager** is a Python class that inherits from `CLBManager` and provides:
+A **manager** is a Python class that inherits from `CLBDeviceManager` or `CLBAppManager` and provides:
 
 - **Setup logic** (run on device boot)
 - **Update logic** (run continuously during the main loop)
@@ -35,12 +35,12 @@ Each manager lives in:
 /managers/<name>_manager.py
 ```
 
-and contains one class:
+and contains one class named `Manager`. There are two base classes to choose from:
 
-```python
-class Manager(CLBManager):
-    ...
-```
+| Base class | Use for |
+|------------|---------|
+| `CLBDeviceManager` | Hardware/service managers (pixels, WiFi, GPIO, sensors, …) |
+| `CLBAppManager` | Application managers (`App_` files — define a complete device configuration) |
 
 Managers allow the CLB system to remain modular, extensible, and hardware-independent.
 
@@ -120,17 +120,20 @@ For example, the MQTT manager waits until WiFi is in `STATE_OK`.
 
 # ⚙️ 4. Settings
 
-Each manager defines settings via the `defaults` dictionary which is supplied as a parameter to the constructor:
+Each manager declares its defaults as a **class attribute**. Device managers use `device_default_settings`:
 
 ```python
-super().__init__(clb, defaults={
-    "enabled": True,
-    "pin": "LED",
-    "delay_seconds": 1.0
-})
+class Manager(CLBDeviceManager):
+    device_default_settings = {
+        "pin": "LED",
+        "delay_seconds": 1.0,
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)   # no defaults argument
 ```
 
-CLB merges these defaults with `/settings.json`.
+CLB merges these defaults with `/settings.json` at startup — any key present in `device_default_settings` but missing from the stored settings is filled in automatically.
 
 Access the merged values through:
 
@@ -138,7 +141,8 @@ Access the merged values through:
 self.settings["pin"]
 self.settings["delay_seconds"]
 ```
-Managers **should not write** their settings directly—saving is handled by CLB + DeviceConfigurator. This is so that the DeviceConfigurator can provide obfuscation. 
+
+Managers **should not write** their settings directly — saving is handled by CLB + DeviceConfigurator.
 
 ---
 
@@ -197,23 +201,24 @@ The Blink Manager is a simple example that:
 # 🧱 8. Blink Manager Code (Annotated)
 
 ```python
-from managers.base import CLBManager
+from managers.base_manager import CLBDeviceManager
 import machine
 import time
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.1"
-    dependencies = []
 
     STATE_DISABLED = "disabled"
     STATE_IDLE     = "idle"
 
+    device_default_settings = {
+        "pin": "LED",             # Default Pico LED
+        "delay_seconds": 1.0,     # Blink once per second
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "pin": "LED",             # Default Pico LED
-            "delay_seconds": 1.0,     # Blink once per second
-        })
+        super().__init__(clb)
         self.state = self.STATE_IDLE
         self._gen  = None
         self.led   = None
@@ -328,12 +333,11 @@ Example:
 ## **Step 2 — Define the class**
 
 ```python
-from managers.base import CLBManager
+from managers.base_manager import CLBDeviceManager
 import machine
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.0"
-    dependencies = []
 ```
 
 ---
@@ -341,12 +345,14 @@ class Manager(CLBManager):
 ## **Step 3 — Declare defaults**
 
 ```python
-def __init__(self, clb):
-    super().__init__(clb, defaults={
+    device_default_settings = {
         "enabled": True,
         "pin": 4,
         "interval": 2.0
-    })
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
 ```
 
 ---
@@ -398,13 +404,13 @@ def cmd_read(self):
 
 | Feature | Required? | Notes |
 |--------|-----------|-------|
-| `defaults` | ✔ | Includes “enabled” key |
+| `device_default_settings` | ✔ | Class attribute; include `”enabled”` key |
 | `setup()` | ✔ | Must set `STATE_OK` on success |
 | `update()` | ✔ | Called every cycle |
 | `get_interface()` | Optional | For user commands |
 | Settings access | ✔ | From `self.settings` |
 | Proper states | ✔ | OK / disabled / error |
-| Dependencies | Optional | Declare using `dependencies` list |
+| Dependencies | Optional | Declared in settings `”dependencies”` list |
 | Teardown | Optional | Release hardware if needed |
 
 ---

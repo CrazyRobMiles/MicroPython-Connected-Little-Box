@@ -1,23 +1,25 @@
 # /managers/uart_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 import machine
 import time
 from machine import UART
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.1"
 
     STATE_DISABLED = "disabled"
     STATE_IDLE     = "idle"
 
+    device_default_settings = {
+        "channel": 0,
+        "baud": 9600,
+        "bits": 8,
+        "parity": "None",
+        "stop": 1,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "channel": 0,
-            "baud": 9600,
-            "bits": 8,
-            "parity": "None",
-            "stop": 1,
-        })
+        super().__init__(clb)
         self.state = self.STATE_IDLE
         self._gen  = None
 

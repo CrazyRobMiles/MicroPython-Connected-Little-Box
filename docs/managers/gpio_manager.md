@@ -12,6 +12,7 @@ Manages general-purpose input and output pins for digital control and sensing.
 | `input_pins` | array | [] | Array of input pin configurations |
 | `output_pins` | array | [] | Array of output pin configurations |
 | `default_debounce_ms` | int | 20 | Default debounce time for input pins |
+| `pullup` | bool | false | Global default for pull-up resistor on input pins |
 
 ## Input Pin Configuration
 
@@ -21,7 +22,8 @@ Each input pin requires:
 |---------|------|-------------|
 | `name` | string | Unique pin identifier |
 | `pin` | int | GPIO pin number |
-| `debounce_ms` | int | Debounce time (uses default if omitted) |
+| `debounce_ms` | int | Debounce time in ms (uses `default_debounce_ms` if omitted) |
+| `pullup` | bool | Enable pull-up resistor for this pin (overrides global default) |
 
 ## Output Pin Configuration
 
@@ -37,12 +39,20 @@ Each output pin requires:
 
 | Service | Description |
 |---------|-------------|
-| `set_output <pin_name> <state>` | Set output pin (0 or 1) |
-| `get_input <pin_name>` | Read input pin state |
+| `set <pin_name> <state>` | Set output pin to 0 (low) or 1 (high) |
+| `get <pin_name>` | Read current state of an input or output pin |
+| `list` | List all configured input and output pins with their current states |
 
 ## Events
 
-This manager can emit state change events for input pins (subscribe via application).
+For each configured input pin named `{name}`, two events are published on state transitions:
+
+| Event | Description |
+|-------|-------------|
+| `gpio.<name>_high` | Pin transitioned from low to high |
+| `gpio.<name>_low` | Pin transitioned from high to low |
+
+These events are used by other managers (such as the [Tilt Manager](tilt_manager.md)) to react to hardware signals.
 
 ## Dependencies
 
@@ -91,32 +101,10 @@ This manager has no dependencies.
 ## Console Usage
 
 ```
-gpio.set_output relay_1 1
-gpio.set_output relay_1 0
-gpio.get_input button_a
-```
-
-## Code Usage
-
-```python
-# Get the GPIO manager instance
-gpio = clb.get_service_handle("gpio")
-
-# Set output pin high
-gpio.set_output("relay_1", 1)
-
-# Set output pin low
-gpio.set_output("relay_1", 0)
-
-# Read input pin
-state = gpio.input_pins["button_a"]["pin"].value()
-print(f"Button A state: {state}")
-
-# Check last state
-last_state = gpio.input_pins["button_a"]["last_state"]
-print(f"Last button state: {last_state}") 1
-gpio.set_output relay_1 0
-gpio.get_input button_a
+gpio.set relay_1 1
+gpio.set relay_1 0
+gpio.get button_a
+gpio.list
 ```
 
 ## GPIO Pin Mapping (Raspberry Pi Pico)

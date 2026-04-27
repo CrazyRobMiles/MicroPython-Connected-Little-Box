@@ -115,9 +115,6 @@ camera.command_fire_shutter("0x01")
 event = clb.get_event("camera.connected")
 if event:
     event.subscribe(on_camera_connected)
-
-sx70r.fire_shutter 0x01
-sx70r.fire_shutter 0x01 2 500
 ```
 
 ## Shutter Control

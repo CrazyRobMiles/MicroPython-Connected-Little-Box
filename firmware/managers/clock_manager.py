@@ -1,5 +1,5 @@
 # /managers/clock_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import time
 import machine
@@ -138,7 +138,7 @@ class _UKDST:
 			self._compute_year(y)
 		return (epoch_utc >= self._start_utc) and (epoch_utc < self._end_utc)
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
 	version = "1.1.0"
 	dependencies = ["wifi"]
 
@@ -146,17 +146,19 @@ class Manager(CLBManager):
 	STATE_SYNCING  = "syncing"
 	STATE_ERROR    = "error"
 
+	device_default_settings = {
+		"enabled": False,
+		"ntpserver": "129.6.15.28",
+		"tz_offset_minutes": 0,
+		"resync_minutes": 180,
+		"sync_timeout_ms": 2000,
+		"sync_on_start": True,
+		"dst_uk_enabled": True,
+		"dst_uk_delta_minutes": 60,
+	}
+
 	def __init__(self, clb):
-		super().__init__(clb, defaults={
-			"enabled": False,
-			"ntpserver": "129.6.15.28",   # numeric by default (no DNS stall)
-			"tz_offset_minutes": 0,
-			"resync_minutes": 180,
-			"sync_timeout_ms": 2000,
-			"sync_on_start": True,
-			"dst_uk_enabled": True,
-			"dst_uk_delta_minutes": 60
-   		})
+		super().__init__(clb)
 
 		self._rtc = machine.RTC()
 		self._ukdst = _UKDST()

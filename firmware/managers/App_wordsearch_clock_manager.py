@@ -1,4 +1,4 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 import json
 import time
 import math
@@ -11,8 +11,123 @@ from HullOS.task import Task
 from HullOS.engine import Engine
 from graphics.colours import find_random_colour
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.1"
+    name = "Wordsearch Clock"
+    file = "App_wordsearch_clock"
+    desc = "Clock that displays the time using an array of neopixels in a wordsearch."
+    app_default_settings =  {
+    "pixel": {
+        "panel_width": 16,
+        "animation": "None",
+        "y_panels": 1,
+        "pixeltype": "RGB",
+        "x_panels": 1,
+        "enabled": True,
+        "panel_type": "Alternate-line-panel",
+        "pixelpin": 2,
+        "panel_height": 16
+    },
+    "wifi": {
+        "dependencies": [],
+        "wifipwd1": "",
+        "enabled": True,
+        "retry_interval_ms": 30000,
+        "wifissid1": ""
+    },
+    "dfplayer": {
+        "dependencies": [],
+        "uart_id": "1",
+        "enabled": True,
+        "rx_pin": "5",
+        "volume": "21",
+        "tx_pin": "4"
+    },
+    "gpio": {
+        "dependencies": [],
+        "output_pins": [
+            {
+                "initial_state": 0,
+                "pin": 21,
+                "name": "fake ground"
+            }
+        ],
+        "input_pins": [
+            {
+                "name": "player_status",
+                "debounce_ms": 20,
+                "pin": 11,
+                "pullup": True
+            },
+            {
+                "name": "tilt_switch",
+                "debounce_ms": 20,
+                "pin": 22,
+                "pullup": True
+            },
+            {
+                "name": "up_button",
+                "debounce_ms": 20,
+                "pin": 16,
+                "pullup": True
+            },
+            {
+                "name": "down_button",
+                "debounce_ms": 20,
+                "pin": 20,
+                "pullup": True
+            },
+            {
+                "name": "hour_button",
+                "debounce_ms": 20,
+                "pin": 15,
+                "pullup": True
+            },
+            {
+                "name": "min_button",
+                "debounce_ms": 20,
+                "pin": 10,
+                "pullup": True
+            }
+        ],
+        "default_debounce_ms": 20,
+        "pullup": False,
+        "enabled": True
+    },
+    "clock": {
+        "ntpserver": "pool.ntp.org",
+        "sync_on_start": True,
+        "dependencies": [
+            "wifi"
+        ],
+        "enabled": True,
+        "dst_uk_enabled": True,
+        "dst_uk_delta_minutes": 60,
+        "sync_timeout_ms": 5000,
+        "tz_offset_minutes": 0,
+        "resync_minutes": 180
+    },
+    "App_wordsearch_clock": {
+        "key_repeat_interval_ms": 500,
+        "start_audio_track_no": 3,
+        "end_audio_track_no": 20,
+        "run_on_power_up": True,
+        "enabled": True,
+        "wordsearch_file": "clockface.json",
+        "wordsearch_letter_delay_ms": 250,
+        "alarm_timeout_ms": 30000,
+        "key_repeat_delay_ms": 1000,
+        "wordsearch_word_delay_ms": 1000,
+        "dependencies": [
+            "clock",
+            "gpio"
+        ],
+        "alarm_sample_interval_ms": 1000,
+        "wordsearch_display_gap_ms": 5000,
+        "alarm_enabled": False
+    }
+        
+    }
 
     SHOW_INACTIVE="inactive"
     SHOW_WORDS="showing words"
@@ -26,23 +141,11 @@ class Manager(CLBManager):
     ALARM_OFF_BACKGROUND_COLOUR=(255,255,10)
     ALARM_TEXT_COLOUR=(20,20,20)
     
-    MESSAGE_ALARM_ON=1
-    MESSAGE_ALARM_OFF=2
+    MESSAGE_ALARM_ON=2
+    MESSAGE_ALARM_OFF=1
     
-    def __init__(self,clb):
-        super().__init__(clb,defaults={
-            "wordsearch_file": "Clock.json",
-            "wordsearch_letter_delay_ms":250,
-            "wordsearch_word_delay_ms":1000,
-            "wordsearch_display_gap_ms":5000,
-            "run_on_power_up":True,
-            "alarm_timeout_ms":30000,
-            "alarm_sample_interval_ms":1000,
-            "key_repeat_delay_ms":500,
-            "key_repeat_interval_ms":333,
-            "start_audio_track_no":3,
-            "end_audio_track_no":20
-        })
+    def __init__(self, clb):
+        super().__init__(clb)
         self.show_state = self.SHOW_INACTIVE
         self.pixel = None
         self.word_positions = {}
@@ -196,8 +299,7 @@ class Manager(CLBManager):
         self.alarm_sample_interval_ms =  int(self.settings.get("alarm_sample_interval_ms", 1000))
         self.key_repeat_delay_ms = int(self.settings.get("key_repeat_delay_ms", 500))
         self.key_repeat_interval_ms = int(self.settings.get("key_repeat_interval_ms", 500))
-        self.start_audio_track_no = int(self.settings.get("start_audio_track_no", 3))
-        self.end_audio_track_no = int(self.settings.get("end_audio_track_no", 20))
+        self.number_of_audio_tracks = int(self.settings.get("number_of_audio_tracks", 10))
         self.alarm_settings=ClockSettingsStore()
         self.alarm_settings.load()
 
@@ -350,7 +452,7 @@ class Manager(CLBManager):
     def play_alarm_sample(self):
         print("Playing alarm sample")
         # First two samples are alarm on and alarm off
-        self.dfplayer.play(random.randint(self.start_audio_track_no,self.end_audio_track_no))
+        self.dfplayer.play(random.randint(3,self.number_of_audio_tracks))
     
     def start_alarm_playback_gap(self):
         print("starting alarm playback gap")

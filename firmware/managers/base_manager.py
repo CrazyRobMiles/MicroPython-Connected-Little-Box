@@ -21,10 +21,9 @@ class CLBManager:
     def unresolved_dependencies(self):
         return [m for m in self.dependency_instances if not hasattr(m, 'state') or m.state != self.STATE_OK]
    
-    def __init__(self, clb=None, defaults=None):
+    def __init__(self, clb=None):
         self.clb = clb
         self.name = self.__class__.__module__.split('.')[-1].replace('_manager', '')
-        self.defaults = defaults or {}
         self.settings = {}
         self.enabled = True
         self.state = self.STATE_STARTING
@@ -54,9 +53,7 @@ class CLBManager:
         pass
 
     def get_defaults(self):
-        d = self.defaults.copy()
-        d["enabled"] = True
-        return d
+        return {"enabled": True}
 
     def get_version(self):
         return self.__class__.version
@@ -243,3 +240,41 @@ class _ServiceHandle:
                 for evt in self.events.values()
             ]
         return []
+
+
+class CLBDeviceManager(CLBManager):
+    """Base class for hardware/service managers.
+
+    Subclasses declare a flat ``device_default_settings`` dict whose keys are
+    the settings for that manager's own section.  These are merged into the
+    manager's settings dict at startup if any keys are missing.
+    """
+
+    device_default_settings = {}
+
+    def get_defaults(self):
+        d = dict(getattr(self.__class__, 'device_default_settings', {}))
+        d["enabled"] = True
+        return d
+
+
+class CLBAppManager(CLBManager):
+    """Base class for application managers.
+
+    Subclasses declare ``app_default_settings`` as a complete ``settings.json``
+    template — one top-level key per manager the application depends on, plus the
+    app's own section keyed by its module name.  This template is written verbatim
+    to ``settings.json`` by the ``select-app`` command.
+
+    ``get_defaults()`` extracts only the app's own section from the template so
+    that ``setup()`` can fill in any missing keys as normal.
+    """
+
+    app_default_settings = {}
+
+    def get_defaults(self):
+        ds = getattr(self.__class__, 'app_default_settings', {})
+        module_name = self.__class__.__module__.split('.')[-1].replace('_manager', '')
+        d = dict(ds.get(module_name, {}))
+        d["enabled"] = True
+        return d

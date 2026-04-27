@@ -1,22 +1,23 @@
 import network
 import time
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 
-class Manager(CLBManager):
-    version = "1.0.2"   # bumped to indicate retry behaviour added
+class Manager(CLBDeviceManager):
+    version = "1.0.2"
 
     STATE_CONNECTING = "connecting"
     STATE_NOT_CONNECTED = "not connected"
     STATE_ERROR = "error"
     STATE_DISABLED = "disabled"
 
-    def __init__(self,clb):
-        # add retry interval to defaults so it can be configured
-        super().__init__(clb,defaults={
-            "wifissid1": "",
-            "wifipwd1": "",
-            "retry_interval_ms": 30000  # how long to wait before retrying
-        })
+    device_default_settings = {
+        "wifissid1": "",
+        "wifipwd1": "",
+        "retry_interval_ms": 30000,
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
         self.wlan = network.WLAN(network.STA_IF)
         self.connect_start_time = None
         self.last_attempt = None

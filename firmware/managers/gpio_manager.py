@@ -1,18 +1,20 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import machine
 import time
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.0"
 
+    device_default_settings = {
+        "input_pins": [],
+        "output_pins": [],
+        "default_debounce_ms": 20,
+        "pullup": False,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "input_pins": [],
-            "output_pins": [],
-            "default_debounce_ms": 20,
-            "pullup":False
-        })
+        super().__init__(clb)
         self.input_pins = {}      # {pin_name: {'pin': Pin, 'last_state': bool, 'last_change_time': int, 'debounce_ms': int}}
         self.output_pins = {}     # {pin_name: {'pin': Pin, 'initial_state': int}}
         self.events = {}    # {event_name: Event object}

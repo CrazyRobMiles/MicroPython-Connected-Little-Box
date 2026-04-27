@@ -17,7 +17,7 @@
 # Server responds to ANY file request for which it has the file.
 #
 
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import machine, os, json, time
 
@@ -31,26 +31,32 @@ DEFAULT_RANGE_SIZE = 2000     # number of bytes client asks for in each request
 FETCH_TIMEOUT_MS = 5000        # how long we wait for a response
 FETCH_REQUEST_RETRY_INTERVAL_MS = 1000
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "4.0.1"
 
     STATE_WAITING = "waiting"
     STATE_CONNECTING = "connecting"
 
-    def __init__(self, clb):
-        uid = machine.unique_id().hex().upper()
-        default_name = f"CLB-{uid}"
+    device_default_settings = {
+        "mqtthost": "",
+        "mqttport": 1883,
+        "mqttuser": "",
+        "mqttpwd": "",
+        "mqttsecure": "no",
+        "devicename": "",
+        "topicbase": "lb/data",
+        "filebase": "lb/file",
+    }
 
-        super().__init__(clb, defaults={
-            "mqtthost": "",
-            "mqttport": 1883,
-            "mqttuser": "",
-            "mqttpwd": "",
-            "mqttsecure": "no",
-            "devicename": default_name,
-            "topicbase": "lb/data",
-            "filebase": "lb/file"
-        })
+    def __init__(self, clb):
+        super().__init__(clb)
+
+    def get_defaults(self):
+        d = super().get_defaults()
+        if not d.get("devicename"):
+            uid = machine.unique_id().hex().upper()
+            d["devicename"] = f"CLB-{uid}"
+        return d
 
         self.client = None
         self.last_loop_time = 0

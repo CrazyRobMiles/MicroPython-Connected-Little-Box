@@ -1,14 +1,33 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.0"
-    name = "HT16K33 display test application"
-    file = "App_Ht16k33_test_manager"
-    desc = "Tests an HT16k33 display"
+    name = "Rotary Encoder Controlled Light"
+    file = "App_lamp"
+    desc = "Uses a Rotary Encoder to control a neopixel panel"
 
-    def __init__(self, clb):
-        super().__init__(clb, defaults={
+    app_default_settings = {
+        "pixel": {
+            "enabled": True,
+            "pixelpin": 18,
+            "panel_width": 8,
+            "panel_height": 8,
+            "x_panels": 1,
+            "y_panels": 1,
+            "pixeltype": "RGB",
+            "animation": "None",
+            "panel_type": "Multi-panels-x"
+        },
+        "rotary_encoder": {
+            "enabled": True,
+            "encoders": [
+                {"name": "color",      "clk_pin": 16, "dt_pin": 17, "btn_pin": -1},
+                {"name": "brightness", "clk_pin": 19, "dt_pin": 20, "btn_pin": -1}
+            ]
+        },
+        "App_lamp": {
+            "enabled": True,
             "default_red": 255,
             "default_green": 255,
             "default_blue": 255,
@@ -16,8 +35,13 @@ class Manager(CLBManager):
             "color_encoder_name": "color",
             "brightness_encoder_name": "brightness",
             "brightness_step": 0.05,
-            "color_hue_step": 5
-        })
+            "color_hue_step": 5,
+            "dependencies": ["pixel", "rotary_encoder"]
+        }
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
         self.pixel_service = None
         self.rotary_encoder_service = None
         self.current_red = 255

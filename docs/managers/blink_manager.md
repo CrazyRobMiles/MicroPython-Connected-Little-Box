@@ -49,14 +49,9 @@ blink.stop
 ## Code Usage
 
 ```python
-# Get the blink manager instance
 blink = clb.get_service_handle("blink")
-
-# Start blinking
 blink.start()
-
-blink.start
-blink.stop
+blink.stop()
 ```
 
 ## Notes

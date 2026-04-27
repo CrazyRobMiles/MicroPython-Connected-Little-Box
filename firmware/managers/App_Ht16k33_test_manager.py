@@ -1,5 +1,5 @@
 # /managers/display_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBAppManager
 from managers.event import Event
 from graphics.display_devices import Ht16k33_14Seg, DisplayItem
 import sys
@@ -8,18 +8,36 @@ import sys
 # CLB Manager
 # --------------------------------------------------------------------
 
-class Manager(CLBManager):
+class Manager(CLBAppManager):
     version = "1.0.2"
     name = "HT16K33 display test application"
-    file = "App_Ht16k33_test_manager"
+    file = "App_Ht16k33_test"
     desc = "Tests an HT16k33 display"
 
-    def __init__(self, clb):
-        super().__init__(clb, defaults={
+    app_default_settings = {
+        "gpio": {
+            "enabled": True,
+            "input_pins": [{"name": "A", "pin": 12}],
+            "output_pins": [],
+            "default_debounce_ms": 20,
+            "pullup": True
+        },
+        "rotary_encoder": {
+            "enabled": True,
+            "encoders": [
+                {"name": "exposure", "clk_pin": 16, "dt_pin": 17, "btn_pin": 15}
+            ]
+        },
+        "App_Ht16k33_test": {
             "enabled": True,
             "i2c_sda": 0,
-            "i2c_clk": 1
-        })
+            "i2c_clk": 1,
+            "dependencies": ["gpio", "rotary_encoder"]
+        }
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
 
         self.display = None
         self.items = {}        # holds DisplayItem objects for other managers

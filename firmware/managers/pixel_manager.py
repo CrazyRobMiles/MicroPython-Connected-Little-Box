@@ -1,4 +1,4 @@
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 import time
 import math
 import random
@@ -13,22 +13,24 @@ from graphics.frame import Frame
 from graphics.coord_map import CoordMap
 from graphics.animations import anim_wandering_sprites,anim_robot_sprites
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.1"
 
-    STATE_PAUSED="paused"
+    STATE_PAUSED = "paused"
 
-    def __init__(self,clb):
-        super().__init__(clb,defaults={
-            "pixelpin": 18,
-            "panel_width": 8,
-            "panel_height": 8,
-            "x_panels": 3,
-            "y_panels": 2,
-            "pixeltype": "RGB",
-            "animation":"None",
-            "panel_type":CoordMap.PIXEL_TYPE_STRING
-        })
+    device_default_settings = {
+        "pixelpin": 18,
+        "panel_width": 8,
+        "panel_height": 8,
+        "x_panels": 3,
+        "y_panels": 2,
+        "pixeltype": "RGB",
+        "animation": "None",
+        "panel_type": CoordMap.PIXEL_TYPE_STRING,
+    }
+
+    def __init__(self, clb):
+        super().__init__(clb)
         self.pixels = None
         self.pixel_count = 0
         self.last_update = time.ticks_ms()

@@ -24,14 +24,16 @@ Controls addressable RGB LED strips (NeoPixel/WS2812B) with animation support an
 | Service | Description |
 |---------|-------------|
 | `on` | Enable pixel display |
-| `stop` | Stop animation |
-| `test` | Display test pattern (fills all pixels) |
-| `raw_test` | Test individual pixel control |
-| `fill <r> <g> <b>` | Fill display with solid color |
-| `set_rgb <x> <y> <r> <g> <b>` | Set individual pixel color |
-| `animate` | Start configured animation |
+| `test` | Scan through all pixels one by one (green) |
+| `raw_test` | Test using raw pixel addressing |
+| `fill <r> <g> <b>` | Fill display with solid colour |
+| `set_rgb <x> <y> <r> <g> <b>` | Set individual pixel colour |
+| `set_brightness <b>` | Set brightness multiplier (0.0–1.0) |
+| `animate <type>` | Start animation; `type` is `wandering` or `robot` |
+| `pause` | Pause the active animation |
+| `resume` | Resume a paused animation |
 | `show` | Refresh pixel display |
-| `clock` | Display time on pixels |
+| `clock` | Display time on pixels (requires clock service) |
 | `show_text <x> <y> <r> <g> <b> "message"` | Display scrolling text |
 
 ## Events
@@ -79,25 +81,12 @@ pixel.stop
 ## Code Usage
 
 ```python
-# Get the pixel manager instance
 pixel = clb.get_service_handle("pixel")
-
-# Enable pixel display
-pixel.command_enable()
-
-# Fill with color
 pixel.command_fill_display(255, 0, 0)
-
-# Set individual pixel
 pixel.command_set_pixel_rgb(0, 0, 255, 128, 0)
-
-# Show text
 pixel.command_show_text(0, 0, 255, 255, 255, "Hello")
-
-# Stop animation
-pixel.command_stop()
-pixel.set_rgb 0 0 255 128 0
-pixel.show_text 0 0 255 255 255 "Hello"
+pixel.command_pause_animation()
+pixel.command_resume_animation()
 ```
 
 ## Notes

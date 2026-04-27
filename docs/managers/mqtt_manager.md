@@ -102,8 +102,6 @@ def on_mqtt_connected(event_data):
 
 # Fetch a file
 mqtt.fetch_file("/settings.json", "/settings_backup.json")
-mqtt.publish_status
-mqtt.fetch_file /settings.json /settings_backup.json
 ```
 
 ## Notes

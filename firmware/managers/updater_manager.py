@@ -13,7 +13,7 @@
 
 import os
 import json
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 
 MANIFEST_REMOTE = "manifest.json"          # upstream (server or peer)
@@ -21,8 +21,13 @@ MANIFEST_LOCAL  = "manifest_local.json"    # generated locally
 MANIFEST_TMP    = "_manifest_tmp.json"     # temp download target
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "3.1.1"
+
+    device_default_settings = {
+        "enabled": True,
+        "source": "",
+    }
 
     (
         PHASE_IDLE,
@@ -36,10 +41,7 @@ class Manager(CLBManager):
     ) = range(8)
 
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "enabled": True,
-            "source": "",     # optional source device name; empty = server
-        })
+        super().__init__(clb)
 
         self._phase = self.PHASE_IDLE
         self._full_update = False  # True for updater.update, False for check*

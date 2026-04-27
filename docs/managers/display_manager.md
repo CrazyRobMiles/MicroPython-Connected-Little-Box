@@ -19,7 +19,9 @@ Display manager provides graphics interface for text and display items.
 
 ## Events
 
-This manager does not emit any events.
+| Event | Description |
+|-------|-------------|
+| `display.updated` | Published whenever the display is refreshed |
 
 ## Dependencies
 

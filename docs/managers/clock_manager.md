@@ -10,14 +10,23 @@ Synchronizes the device time with an NTP (Network Time Protocol) server and prov
 |---------|------|---------|-------------|
 | `enabled` | bool | false | Enable/disable the clock |
 | `ntpserver` | string | "129.6.15.28" | NTP server address (numeric IP recommended) |
-| `tz_offset_minutes` | int | 0 | Timezone offset in minutes (e.g., 300 for UTC-5) |
-| `resync_minutes` | int | 180 | Interval in minutes between time resynchronization |
+| `tz_offset_minutes` | int | 0 | Timezone offset in minutes (e.g., -300 for UTC-5, 60 for UTC+1) |
+| `resync_minutes` | int | 180 | Interval in minutes between time resynchronisation |
 | `sync_timeout_ms` | int | 2000 | NTP request timeout in milliseconds |
-| `sync_on_start` | bool | true | Synchronize time on startup |
+| `sync_on_start` | bool | true | Synchronise time on startup |
+| `dst_uk_enabled` | bool | true | Apply UK/BST daylight saving time automatically |
+| `dst_uk_delta_minutes` | int | 60 | Extra minutes added during BST (UK DST) |
 
 ## Services (Commands)
 
-This manager provides no console commands.
+| Service | Description |
+|---------|-------------|
+| `on` | Enable the clock manager |
+| `off` | Disable the clock manager |
+| `sync` | Force an immediate async NTP sync (requires WiFi) |
+| `time` | Return current local time as `(hour, minute, second)` |
+| `date` | Return current local date as `(year, month, day)` |
+| `dst_test [year]` | Run a deterministic UK DST transition test for the given year |
 
 ## Events
 

@@ -11,6 +11,7 @@ Manages WiFi connectivity for the device. Many other managers depend on WiFi.
 | `enabled` | bool | false | Enable/disable WiFi |
 | `wifissid1` | string | "" | WiFi network SSID |
 | `wifipwd1` | string | "" | WiFi network password |
+| `retry_interval_ms` | int | 30000 | How long to wait before retrying a failed connection (milliseconds) |
 
 ## Services (Commands)
 

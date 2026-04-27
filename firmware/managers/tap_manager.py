@@ -1,24 +1,26 @@
 # managers/tap_manager.py
-from managers.base_manager import CLBManager
+from managers.base_manager import CLBDeviceManager
 from managers.event import Event
 import machine
 import time
 
 
-class Manager(CLBManager):
+class Manager(CLBDeviceManager):
     version = "1.0.1"
 
+    device_default_settings = {
+        "tap_pin": None,
+        "name": "button",
+        "pullup": True,
+        "active_level": 0,
+        "debounce_ms": 20,
+        "max_intertap_ms": 500,
+        "end_gap_ms": 500,
+        "idle_ms": 1000,
+    }
+
     def __init__(self, clb):
-        super().__init__(clb, defaults={
-            "tap_pin": None,            # single GPIO number
-            "name": "button",           # event namespace: tap.<name>.*
-            "pullup": True,
-            "active_level": 0,          # for pullup buttons, press reads LOW => 0
-            "debounce_ms": 20,
-            "max_intertap_ms": 500,
-            "end_gap_ms": 500,
-            "idle_ms": 1000,
-        })
+        super().__init__(clb)
 
         self.s = None                 # single input state dict
         self.events = {}

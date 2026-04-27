@@ -11,23 +11,34 @@ This directory contains documentation for all Connected Little Box (CLB) manager
 
 ### Device Control
 - [Blink Manager](blink_manager.md) - GPIO blinking patterns
-- [Stepper Manager](stepper_manager.md) - Motor control
-- [Pixel Manager](pixel_manager.md) - LED strip control
 - [GPIO Manager](gpio_manager.md) - General I/O pins
+- [Stepper Manager](stepper_manager.md) - Stepper motor control
+- [Pixel Manager](pixel_manager.md) - NeoPixel LED strip control
+
+### Servo & Animatronics
+- [PCA9685 Manager](pca9685_manager.md) - 16-channel I2C PWM/servo controller with orchestration
+- [Eye Manager](eye_manager.md) - Servo-driven googly eyes with look, blink, pose, and idle animation
+
+### Sensors & Input
+- [Rotary Encoder Manager](rotary_encoder_manager.md) - User input via rotary encoders
+- [Tap Manager](tap_manager.md) - Button tap detection (single, double, triple, long-press)
+- [Tilt Manager](tilt_manager.md) - Tilt-sensor gesture detection (tip, pulse, sequence)
+
+### Audio
+- [DFPlayer Manager](dfplayer_manager.md) - DFPlayer Mini MP3 audio playback over UART
 
 ### Display & UI
 - [Display Manager](display_manager.md) - LCD and e-ink displays
-- [Rotary Encoder Manager](rotary_encoder_manager.md) - User input knobs
 - [Lamp Manager](lamp_manager.md) - Lamp control
 
 ### System Management
-- [Clock Manager](clock_manager.md) - Time synchronization
+- [Clock Manager](clock_manager.md) - Time synchronisation
 - [Updater Manager](updater_manager.md) - Firmware updates
 - [HullOS Manager](hullos_manager.md) - Task scheduling
 
-### Specialized
-- [SX-70R Manager](sx70r_manager.md) - Camera control via BLE
-- [WordSearch Manager](wordsearch_manager.md) - Puzzle functionality
+### Specialised Apps
+- [SX-70R Manager](sx70r_manager.md) - Polaroid SX-70R camera control via BLE
+- [WordSearch Manager](wordsearch_manager.md) - Word search clock and puzzle display
 
 ## Manager Information Structure
 
