@@ -3,7 +3,7 @@ import time
 from managers.base_manager import CLBDeviceManager
 
 class Manager(CLBDeviceManager):
-    version = "1.0.2"
+    version = "2.0.0"
 
     STATE_CONNECTING = "connecting"
     STATE_NOT_CONNECTED = "not connected"

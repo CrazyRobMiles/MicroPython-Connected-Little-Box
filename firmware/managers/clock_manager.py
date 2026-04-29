@@ -139,7 +139,7 @@ class _UKDST:
 		return (epoch_utc >= self._start_utc) and (epoch_utc < self._end_utc)
 
 class Manager(CLBDeviceManager):
-	version = "1.1.0"
+	version = "2.0.0"
 	dependencies = ["wifi"]
 
 	STATE_WAITING  = "waiting"

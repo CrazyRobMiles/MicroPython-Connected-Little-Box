@@ -12,7 +12,7 @@ from HullOS.engine import Engine
 from graphics.colours import find_random_colour
 
 class Manager(CLBAppManager):
-    version = "1.0.1"
+    version = "2.0.0"
     name = "Wordsearch Clock"
     file = "App_wordsearch_clock"
     desc = "Clock that displays the time using an array of neopixels in a wordsearch."

@@ -9,7 +9,7 @@ from HullOS.task import Task
 from HullOS.engine import Engine
 
 class Manager(CLBDeviceManager):
-    version = "1.0.1"
+    version = "2.0.0"
 
     device_default_settings = {
         "default_program": "default.pyish",

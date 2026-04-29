@@ -4,7 +4,7 @@ import machine
 import time
 
 class Manager(CLBDeviceManager):
-    version = "1.0.0"
+    version = "2.0.0"
 
     device_default_settings = {
         "input_pins": [],

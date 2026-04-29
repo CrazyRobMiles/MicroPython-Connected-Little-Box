@@ -2,7 +2,7 @@ from managers.base_manager import CLBAppManager
 
 
 class Manager(CLBAppManager):
-    version = "1.0.0"
+    version = "2.0.0"
     name = "Rotary Encoder Controlled Light"
     file = "App_lamp"
     desc = "Uses a Rotary Encoder to control a neopixel panel"

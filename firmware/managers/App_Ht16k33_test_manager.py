@@ -9,7 +9,7 @@ import sys
 # --------------------------------------------------------------------
 
 class Manager(CLBAppManager):
-    version = "1.0.2"
+    version = "2.0.0"
     name = "HT16K33 display test application"
     file = "App_Ht16k33_test"
     desc = "Tests an HT16k33 display"

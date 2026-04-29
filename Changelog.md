@@ -26,3 +26,9 @@
 - added manager documentation
 - added reset.py program to reset a device
 - added new packed clock wordsearch design
+
+## Version 2.0.0
+
+- There are now separate manager types for application and device manager. Applications contain application settings (which will include setting values for the device managers that they use). Devices contain device settings. 
+- There are now app commands which allow setting values from applications to be copied into the settings.json file for a device. This allows you to switch apps from the command prompt. There is now an app_manifest.py fil which identifies applications installed on a device. This is to make it possible to build a CLB installation into a MicroPython build and create a self-contained device. See the Application Definition guide for details.
+- Commands are now given in function call syntax and implemented using eval. The set command still works as before (although it can also be called as a function)

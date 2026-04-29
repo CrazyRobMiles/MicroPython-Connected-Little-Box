@@ -8,7 +8,7 @@ from app_manifest import APPS
 
 class CLB:
 
-    version = "1.0.3"
+    version = "2.0.0"
 
 
     def __init__(self, config):

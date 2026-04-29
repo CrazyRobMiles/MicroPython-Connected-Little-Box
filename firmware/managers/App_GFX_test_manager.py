@@ -9,7 +9,7 @@ import sys
 # --------------------------------------------------------------------
 
 class Manager(CLBAppManager):
-    version = "1.0.2"
+    version = "2.0.0"
     name = "Pimoroni GFX Display test application"
     file = "App_GFX_test"
     desc = "Tests the display and buttons for a Pimoroni display"

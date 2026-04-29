@@ -7,9 +7,6 @@ You can use the supplied managers to control WiFi, MQTT, clock, pixels, stepper 
 
 The system runs on Raspberry Pi Pico and ESP32 devices. A compatibility layer abstracts the timer functions used by stepper motors.
 
-* [Roadmap](/docs/ROADMAP.md)
-* [Status](/docs/STATUS.md)
-
 ## Documentation
 
 ### Getting Started & Guides
@@ -57,6 +54,11 @@ The system runs on Raspberry Pi Pico and ESP32 devices. A compatibility layer ab
 #### Specialised Apps
 * [SX-70R Manager](/docs/managers/sx70r_manager.md) - Polaroid SX-70R camera control via BLE
 * [WordSearch Manager](/docs/managers/wordsearch_manager.md) - Word search clock and puzzle display
+
+## Project
+
+* [Roadmap](/docs/ROADMAP.md)
+* [Status](/docs/STATUS.md)
 
 Have Fun!
 

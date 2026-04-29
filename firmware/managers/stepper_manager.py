@@ -19,7 +19,7 @@ class Manager(CLBDeviceManager):
     - Public API: move(mm), rotate(deg), arc(radius, deg) + console commands.
     """
 
-    version = "1.3.1"
+    version = "2.0.0"
 
     STATE_DISABLED = "disabled"
     STATE_READY    = "ready"

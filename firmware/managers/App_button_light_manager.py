@@ -2,7 +2,7 @@ from managers.base_manager import CLBAppManager
 
 
 class Manager(CLBAppManager):
-    version = "1.0.0"
+    version = "2.0.0"
     name = "Button Light"
     file = "App_button_light"
     desc = "Lights up pixels when a button is pressed, off when released"

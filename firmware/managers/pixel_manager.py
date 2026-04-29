@@ -14,7 +14,7 @@ from graphics.coord_map import CoordMap
 from graphics.animations import anim_wandering_sprites,anim_robot_sprites
 
 class Manager(CLBDeviceManager):
-    version = "1.0.1"
+    version = "2.0.0"
 
     STATE_PAUSED = "paused"
 

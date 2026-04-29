@@ -2,7 +2,7 @@ from managers.base_manager import CLBAppManager
 
 
 class Manager(CLBAppManager):
-    version = "1.0.0"
+    version = "2.0.0"
     name = "Button Light Empty"
     file = "App_button_light_empty"
     desc = "Exercise 01 starting point — skeleton with no hardware attached"
