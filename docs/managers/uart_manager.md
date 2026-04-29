@@ -55,8 +55,8 @@ This manager has no dependencies.
 ## Console Usage
 
 ```
-uart.hello
-uart.init
+uart.hello()
+uart.init()
 ```
 
 ## Code Usage
@@ -73,8 +73,6 @@ uart.init()
 
 # Write data directly
 uart.uart.write(b'Hello from CLB\r\n')
-uart.hello
-uart.init
 ```
 
 ## Common Baud Rates

@@ -25,10 +25,10 @@ Controls SX-70 format cameras (via BLE) for remote camera operations and exposur
 | `disconnect` | Disconnect from camera |
 | `scan_register` | Scan for new cameras and display addresses |
 | `approved` | List approved camera addresses |
-| `set_preferred <AA:BB:CC:DD:EE:FF>` | Set preferred camera address |
-| `request_iso` | Request current ISO setting from camera |
-| `get_iso` | Get last received ISO value |
-| `fire_shutter <exp_hex> [timer_s] [hold_ms]` | Fire camera shutter |
+| `set_preferred("AA:BB:CC:DD:EE:FF")` | Set preferred camera address |
+| `request_iso()` | Request current ISO setting from camera |
+| `get_iso()` | Get last received ISO value |
+| `fire_shutter(exp_hex, timer_s, hold_ms)` | Fire camera shutter |
 
 ## Events
 
@@ -85,12 +85,12 @@ Cameras are identified by BLE advertisement name "CH9141BLE2U". The manager can:
 ## Console Usage
 
 ```
-sx70r.connect
-sx70r.disconnect
-sx70r.scan_register
-sx70r.request_iso
-sx70r.fire_shutter 0x01
-sx70r.fire_shutter 0x01 2 500
+sx70r.connect()
+sx70r.disconnect()
+sx70r.scan_register()
+sx70r.request_iso()
+sx70r.fire_shutter(0x01)
+sx70r.fire_shutter(0x01, 2, 500)
 ```
 
 ## Code Usage

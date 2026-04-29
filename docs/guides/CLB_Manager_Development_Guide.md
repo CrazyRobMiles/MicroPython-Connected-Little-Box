@@ -158,14 +158,30 @@ def get_interface(self):
     }
 ```
 
-Users can call these in the CLB console:
+Users call these from the CLB console using **Python function-call syntax** — the same syntax used to call methods in code:
 
 ```
-blink.start
-blink.stop
+blink.start()
+blink.stop()
 ```
 
-Or from Pythonish scripts.
+Commands that accept arguments are called exactly as you would call a Python function:
+
+```
+pixel.fill(255, 0, 0)
+pixel.mode("wordsearch")
+stepper.move(100)
+```
+
+Named (keyword) arguments also work if the underlying method supports them:
+
+```
+pixel.fill(red=255, green=0, blue=0)
+```
+
+A bare name with no parentheses is treated as a zero-argument call, so `blink.start` and `blink.start()` are equivalent.
+
+This design is intentional: the console command and the equivalent Python code look the same, making it easy to graduate from typing commands at the prompt to writing them in a script.
 
 ---
 

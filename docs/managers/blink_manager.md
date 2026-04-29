@@ -42,8 +42,8 @@ This manager has no dependencies.
 ## Console Usage
 
 ```
-blink.start
-blink.stop
+blink.start()
+blink.stop()
 ```
 
 ## Code Usage

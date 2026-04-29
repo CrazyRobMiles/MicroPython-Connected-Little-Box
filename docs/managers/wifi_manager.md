@@ -51,8 +51,8 @@ This manager has no dependencies.
 ## Console Usage
 
 ```
-wifi.on
-wifi.off
+wifi.on()
+wifi.off()
 ```
 
 ## Code Usage
@@ -66,10 +66,6 @@ wifi.command_enable_wifi()
 
 # Disable WiFi
 wifi.command_disable_wifi()
-
-# Check WiFi state
-wifi.on
-wifi.off
 ```
 
 ## Notes

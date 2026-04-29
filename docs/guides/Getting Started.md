@@ -1,7 +1,9 @@
 # ⭐ Connected Little Box – Installation Guide  
-### Using Visual Studio Code + Raspberry Pi Pico Extension
 
-This guide shows you how to:
+
+## Using Visual Studio Code + Raspberry Pi Pico Extension
+
+This section shows you how to:
 
 1. Install Visual Studio Code and the Raspberry Pi Pico extension  
 2. Flash MicroPython onto your Raspberry Pi Pico  
@@ -131,18 +133,7 @@ If you want to copy files from the PICO back into the repo on the PC you can rig
 
 ## ▶️ 6. Ensure CLB Starts Automatically (`main.py`)
 
-You should have a `main.py` on the Pico that launches CLB:
-
-```python
-import clb
-
-device = clb.CLB("/settings.json")
-device.setup()
-
-while device.running:
-    device.update()
-    device.update_console()
-```
+You should have a `main.py` on the Pico that launches CLB
 
 This script ensures the CLB framework starts on every boot. If you want to run the project inside Visual Studio Code you should open the **main.py** file in the editor (remember to open the PICO copy and not the Repo copy) and then select **Run** from the **bottom** menu. 
 
@@ -195,3 +186,6 @@ You now have:
 - Firmware deployable via one-click  
 - REPL access for debugging  
 - A stable environment for running managers, animations, scripts, and more  
+
+
+[↑ Back to README](../../README.md)

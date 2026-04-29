@@ -26,15 +26,15 @@ Controls addressable RGB LED strips (NeoPixel/WS2812B) with animation support an
 | `on` | Enable pixel display |
 | `test` | Scan through all pixels one by one (green) |
 | `raw_test` | Test using raw pixel addressing |
-| `fill <r> <g> <b>` | Fill display with solid colour |
-| `set_rgb <x> <y> <r> <g> <b>` | Set individual pixel colour |
-| `set_brightness <b>` | Set brightness multiplier (0.0–1.0) |
-| `animate <type>` | Start animation; `type` is `wandering` or `robot` |
-| `pause` | Pause the active animation |
-| `resume` | Resume a paused animation |
-| `show` | Refresh pixel display |
-| `clock` | Display time on pixels (requires clock service) |
-| `show_text <x> <y> <r> <g> <b> "message"` | Display scrolling text |
+| `fill(r, g, b)` | Fill display with solid colour |
+| `set_rgb(x, y, r, g, b)` | Set individual pixel colour |
+| `set_brightness(b)` | Set brightness multiplier (0.0–1.0) |
+| `animate(type)` | Start animation; `type` is `"wandering"` or `"robot"` |
+| `pause()` | Pause the active animation |
+| `resume()` | Resume a paused animation |
+| `show()` | Refresh pixel display |
+| `clock()` | Display time on pixels (requires clock service) |
+| `show_text(x, y, r, g, b, "message")` | Display scrolling text |
 
 ## Events
 
@@ -71,11 +71,11 @@ This manager has no dependencies.
 ## Console Usage
 
 ```
-pixel.on
-pixel.fill 255 0 0
-pixel.set_rgb 0 0 255 128 0
-pixel.show_text 0 0 255 255 255 "Hello"
-pixel.stop
+pixel.on()
+pixel.fill(255, 0, 0)
+pixel.set_rgb(0, 0, 255, 128, 0)
+pixel.show_text(0, 0, 255, 255, 255, "Hello")
+pixel.stop()
 ```
 
 ## Code Usage

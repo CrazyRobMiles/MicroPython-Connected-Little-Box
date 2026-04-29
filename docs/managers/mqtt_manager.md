@@ -25,7 +25,7 @@ Provides MQTT connectivity for remote message publishing/subscribing and file tr
 | `connect` | Connect to MQTT broker |
 | `disconnect` | Disconnect from MQTT broker |
 | `publish_status` | Publish current device status |
-| `fetch_file <path> [target_path]` | Download a file from another device via MQTT |
+| `fetch_file(path, target_path)` | Download a file from another device via MQTT |
 
 ## Events
 
@@ -75,10 +75,10 @@ Provides MQTT connectivity for remote message publishing/subscribing and file tr
 ## Console Usage
 
 ```
-mqtt.connect
-mqtt.disconnect
-mqtt.publish_status
-mqtt.fetch_file /settings.json /settings_backup.json
+mqtt.connect()
+mqtt.disconnect()
+mqtt.publish_status()
+mqtt.fetch_file("/settings.json", "/settings_backup.json")
 ```
 
 ## Code Usage

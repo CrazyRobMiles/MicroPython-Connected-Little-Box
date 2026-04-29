@@ -318,159 +318,60 @@ class CLB:
 
 
     def handle_command(self, line: str):
-        """Parse a console line and invoke a unified-interface command.
+        """Parse and invoke a command using Python function-call syntax.
         Examples:
-            pixel.fill 255 0 0
-            pixel.mode "wordsearch"
-            wordsearch.load '{"grid": "..."}'
-            stepper.move 100 -50  # ints
-            net.set-host 0xC0A80164  # hex -> 3232235876
-            flag.set true            # bool
+            pixel.fill(255, 0, 0)
+            pixel.mode("wordsearch")
+            pixel.fill(red=255, green=0, blue=0)
+            help("pixel")
+            status()
+            help
+        A bare name with no parentheses is treated as a zero-argument call.
         """
         if not line:
             return
-
         line = line.strip()
         if not line:
             return
 
-        parts = self._split_args(line)
-        if not parts:
+        # set uses its own parser: set manager.setting=value (no parens needed)
+        if line.startswith("set ") and "(" not in line:
+            self.set_setting(line[4:].strip())
             return
 
-        cmd, *raw_args = parts
-
-        # built-in: help (uses unified interface too)
-        if cmd == "help":
-            self.show_help(raw_args[0] if raw_args else None)
-            return
+        paren_pos = line.find("(")
+        if paren_pos != -1:
+            if not line.endswith(")"):
+                print("Syntax error: missing closing ')'")
+                return
+            cmd = line[:paren_pos].strip()
+            args_str = line[paren_pos + 1:-1]
+        else:
+            cmd = line
+            args_str = None
 
         entry = self.interface.get(cmd)
         if not entry:
-            print(f"Unknown command: {cmd}. Try 'help'.")
+            print(f"Unknown command: '{cmd}'. Try help().")
             return
 
         func = entry["handler"]
 
-        # Best-effort coercion of string args to useful Python types
-        args = []
-        for a in raw_args:
-            args.append(self._coerce_arg(a))
-
         try:
-            result = func(*args)
+            if args_str is not None and args_str.strip():
+                result = eval(f"_f_({args_str})", {"_f_": func})
+            else:
+                result = func()
             if result is not None:
                 print(result)
         except TypeError as e:
             desc = entry.get("description", "")
-            print(f"Usage error for {cmd}: {e}")
+            print(f"Usage error for '{cmd}': {e}")
             if desc:
-                print(f"Hint: {cmd} - {desc}")
+                print(f"  {cmd} - {desc}")
         except Exception as e:
             sys.print_exception(e)
-            print(f"Error running {cmd}: {e}")
-
-    def _split_args(self, s: str):
-        """
-        Split a command line into arguments, preserving quotes so _coerce_arg()
-        can tell whether a token was originally quoted.
-        """
-        out, buf, quote = [], [], None
-        i, n = 0, len(s)
-
-        while i < n:
-            c = s[i]
-
-            if quote:
-                if c == quote:
-                    buf.append(c)     # keep closing quote
-                    quote = None
-                elif c == "\\" and i+1 < n and s[i+1] in ('"', "'", "\\"):
-                    buf.append(s[i+1])
-                    i += 1
-                else:
-                    buf.append(c)
-            else:
-                if c in ("'", '"'):
-                    quote = c
-                    buf.append(c)     # keep opening quote
-                elif c.isspace():
-                    if buf:
-                        out.append("".join(buf))
-                        buf = []
-                else:
-                    buf.append(c)
-
-            i += 1
-
-        # Final token
-        if buf:
-            out.append("".join(buf))
-
-        return out
-
-    def _coerce_arg(self, a: str):
-        """Turn console strings into useful Python values, preserving quoted text."""
-        if not a:
-            return a
-
-        # QUOTED STRINGS — always return raw string without the quotes
-        if (a.startswith('"') and a.endswith('"')) or (a.startswith("'") and a.endswith("'")):
-            return a[1:-1]
-
-        low = a.lower()
-
-        # JSON objects/arrays
-        if (a.startswith("{") and a.endswith("}")) or (a.startswith("[") and a.endswith("]")):
-            try:
-                import ujson as json
-            except Exception:
-                import json
-            try:
-                return json.loads(a)
-            except Exception:
-                pass
-
-        # Booleans / null
-        if low in ("true", "false"):
-            return low == "true"
-        if low in ("none", "null"):
-            return None
-
-        # Hex ints like 0xFFEE
-        if a.startswith(("0x", "0X")):
-            try:
-                return int(a, 16)
-            except Exception:
-                pass
-
-        # Int
-        if all(ch.isdigit() or ch in "+-" for ch in a):
-            try:
-                return int(a)
-            except Exception:
-                pass
-
-        # Float
-        if "." in a and all(ch in "0123456789+-.eE" for ch in a):
-            try:
-                return float(a)
-            except Exception:
-                pass
-
-        # Tuple shorthand: "(1,2,3)"
-        if a.startswith("(") and a.endswith(")"):
-            inner = a[1:-1].strip()
-            if inner == "":
-                return tuple()
-            return tuple(self._coerce_arg(x.strip()) for x in inner.split(","))
-
-        # Comma list shorthand: "1,2,3"
-        if "," in a and (" " not in a):
-            return [self._coerce_arg(x) for x in a.split(",")]
-
-        # Fallback: raw string
-        return a
+            print(f"Error running '{cmd}': {e}")
 
     def notify_manager_setting_changed(self, manager_name, setting_name, old_value,new_value):
         """

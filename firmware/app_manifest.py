@@ -2,6 +2,16 @@
 
 APPS = [
     {
+        "name": "Button Light",
+        "file": "App_button_light",
+        "desc": "Exercise 01 — lights up pixels when a button is pressed"
+    },
+    {
+        "name": "Button Light Empty",
+        "file": "App_button_light_empty",
+        "desc": "Exercise 01 starting point — skeleton with no hardware attached"
+    },
+    {
         "name": "Atom SX70 Remote Manager",
         "file": "App_atom_sx70_remote",
         "desc": "Polaroid SX70 remote control for M5Stack Atom with Colour Display."

@@ -20,9 +20,9 @@ Controls 1-4 stepper motors (28BYJ-48 with ULN2003 drivers) for movement and rot
 
 | Service | Description |
 |---------|-------------|
-| `move <distance_mm>` | Move forward/backward specified distance |
-| `rotate <degrees>` | Rotate specified degrees |
-| `arc <radius_mm> <degrees>` | Move in circular arc |
+| `move(distance_mm)` | Move forward/backward specified distance |
+| `rotate(degrees)` | Rotate specified degrees |
+| `arc(radius_mm, degrees)` | Move in circular arc |
 | `stop` | Stop all motors immediately |
 
 ## Events
@@ -84,10 +84,10 @@ Use -1 for unused motors.
 ## Console Usage
 
 ```
-stepper.move 100
-stepper.rotate 90
-stepper.arc 200 45
-stepper.stop
+stepper.move(100)
+stepper.rotate(90)
+stepper.arc(200, 45)
+stepper.stop()
 ```
 
 ## Code Usage
@@ -110,9 +110,7 @@ stepper.stop()
 
 # Check if moving
 if stepper._moving_any:
-    print("Motors are moving")te 90
-stepper.arc 200 45
-stepper.stop
+    print("Motors are moving")
 ```
 
 ## Notes

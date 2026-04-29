@@ -65,10 +65,10 @@ Manages firmware updates by fetching manifests and updating files via MQTT.
 ## Console Usage
 
 ```
-updater.check
-updater.check_verbose
-updater.update
-updater.update_verbose
+updater.check()
+updater.check_verbose()
+updater.update()
+updater.update_verbose()
 ```
 
 ## Code Usage

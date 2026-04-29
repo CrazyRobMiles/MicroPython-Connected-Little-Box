@@ -18,9 +18,9 @@ The DFPlayer accesses files by the order they were copied to the card, not by fi
 
 | Command | Syntax | Description |
 |---------|--------|-------------|
-| `play` | `play <track_no>` | Play track by number (1-based, order files were written to card) |
-| `stop` | `stop` | Stop current playback |
-| `volume` | `volume <0..30>` | Set playback volume |
+| `play` | `play(track_no)` | Play track by number (1-based, order files were written to card) |
+| `stop` | `stop()` | Stop current playback |
+| `volume` | `volume(level)` | Set playback volume (0–30) |
 
 ## Dependencies
 
@@ -54,12 +54,12 @@ None.
 }
 ```
 
-## Example Usage
+## Console Usage
 
 ```
-dfplayer play 1        # play the first track (alarm off message)
-dfplayer play 2        # play the second track (alarm on message)
-dfplayer play 5        # play track 5
-dfplayer volume 25     # increase volume
-dfplayer stop          # stop playback
+dfplayer.play(1)      # play the first track (alarm off message)
+dfplayer.play(2)      # play the second track (alarm on message)
+dfplayer.play(5)      # play track 5
+dfplayer.volume(25)   # increase volume
+dfplayer.stop()       # stop playback
 ```
