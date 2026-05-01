@@ -32,3 +32,11 @@
 - There are now separate manager types for application and device manager. Applications contain application settings (which will include setting values for the device managers that they use). Devices contain device settings. 
 - There are now app commands which allow setting values from applications to be copied into the settings.json file for a device. This allows you to switch apps from the command prompt. There is now an app_manifest.py fil which identifies applications installed on a device. This is to make it possible to build a CLB installation into a MicroPython build and create a self-contained device. See the Application Definition guide for details.
 - Commands are now given in function call syntax and implemented using eval. The set command still works as before (although it can also be called as a function)
+
+## Version 2.1.0
+
+- Added `load <name>` command to dynamically import, configure, and start a manager at runtime without rebooting. Settings are persisted to `settings.json` so the manager starts automatically on the next reboot.
+- Added `unload <name>` command to tear down and remove a running manager. Refuses if any other loaded manager declares it as a dependency. Before proceeding, warns about any managers that subscribe to the unloading manager's events or hold a live service handle for it. Sets `enabled: false` in `settings.json` so the manager does not restart on reboot.
+- Both commands rebuild the unified interface immediately, so newly loaded manager commands are available in the REPL straight away.
+- This enables dynamic application construction: load device managers interactively, verify hardware, then load the application manager on top — without rebooting at any stage.
+

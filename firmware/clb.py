@@ -8,7 +8,7 @@ from app_manifest import APPS
 
 class CLB:
 
-    version = "2.0.0"
+    version = "2.1.0"
 
 
     def __init__(self, config):
@@ -217,7 +217,9 @@ class CLB:
             "memory": ("Show memory status",self.show_memory_status),
             "exec": ("Executes Python statement", self.execute_python_statement),
             "apps": ("Lists all the applications", self.show_applications),
-            "select-app" : ("Select an application for this device",self.select_application)
+            "select-app" : ("Select an application for this device",self.select_application),
+            "load": ("Dynamically load a manager by name", self.load_manager),
+            "unload": ("Unload a manager (refuses if another manager depends on it)", self.unload_manager),
         }
 
     def update(self):
@@ -681,6 +683,162 @@ class CLB:
         else:
             self.configure_app_settings(app)
         
+    def _warn_unload_impacts(self, name, mgr):
+        """Warn about managers that subscribe to this manager's events or hold a service handle for it."""
+        warned = set()
+
+        # Event subscribers: scan every event owned by the unloading manager.
+        if hasattr(mgr, "events"):
+            for evt_name, evt in mgr.events.items():
+                for sub in evt.subscribers:
+                    cb = sub["cb"]
+                    owner = getattr(cb, "__self__", None)
+                    if owner is None:
+                        continue
+                    for n, m in self.manager_entries:
+                        if m is owner and n != name:
+                            print(f"[CLB] Warning: '{n}' is subscribed to event '{evt_name}' owned by '{name}'")
+                            warned.add(n)
+                            break
+
+        # Service handles: scan other managers' instance attributes for
+        # _ServiceHandle objects whose prefix matches this manager's name.
+        for n, m in self.manager_entries:
+            if n == name:
+                continue
+            try:
+                attrs = m.__dict__
+            except AttributeError:
+                continue
+            for attr_val in attrs.values():
+                if hasattr(attr_val, "_prefix") and hasattr(attr_val, "_funcs"):
+                    if attr_val._prefix == mgr.name:
+                        print(f"[CLB] Warning: '{n}' holds a service handle for '{name}'")
+                        warned.add(n)
+                        break
+
+        if warned:
+            print(f"[CLB] The above managers may malfunction after '{name}' is unloaded")
+
+    def load_manager(self, name):
+        """Dynamically import, instantiate, and start a manager by settings-key name."""
+        for n, _ in self.manager_entries:
+            if n == name:
+                print(f"[CLB] Manager '{name}' is already loaded")
+                return
+
+        module_name = f"managers.{name}_manager"
+        try:
+            module = __import__(module_name)
+            for part in module_name.split(".")[1:]:
+                module = getattr(module, part)
+            manager_class = getattr(module, "Manager")
+            mgr = manager_class(self)
+        except Exception as e:
+            sys.print_exception(e)
+            print(f"[CLB] Cannot import manager '{name}': {e}")
+            return
+
+        # Merge class defaults with any previously saved settings.
+        defaults = mgr.get_defaults()
+        saved = self.settings.get(name, {})
+        merged = defaults.copy()
+        merged.update(saved)
+        mgr.settings = merged
+        mgr.enabled = merged.get("enabled", True)
+        self.settings[name] = merged
+
+        # Refuse if declared dependencies are not yet running.
+        loaded_names = {n for n, _ in self.manager_entries}
+        missing = [d for d in mgr.get_dependencies() if d not in loaded_names]
+        if missing:
+            print(f"[CLB] Cannot load '{name}' — missing dependencies: {', '.join(missing)}")
+            return
+
+        # Wire dependency instances from what is currently running.
+        manager_lookup = {n: m for n, m in self.manager_entries}
+        mgr.dependency_instances = [manager_lookup[d] for d in mgr.get_dependencies() if d in manager_lookup]
+
+        from managers.base_manager import console_printer
+        mgr.add_message_handler(console_printer)
+
+        try:
+            mgr.setup(mgr.settings)
+        except Exception as e:
+            sys.print_exception(e)
+            print(f"[CLB] Manager '{name}' failed during setup: {e}")
+            return
+
+        self.manager_entries.append((name, mgr))
+        self.status[name] = mgr.get_status()
+
+        # Rebuild the unified interface before setup_services so that
+        # service handles (get_service_handle) resolve correctly.
+        self.build_interface()
+
+        try:
+            mgr.setup_services()
+        except Exception as e:
+            sys.print_exception(e)
+            print(f"[CLB] Manager '{name}' failed during setup_services: {e}")
+
+        try:
+            self.config.save()
+        except Exception as e:
+            print(f"[CLB] Warning: could not persist settings: {e}")
+
+        print(f"[CLB] Manager '{name}' loaded  (state: {mgr.state})")
+
+    def unload_manager(self, name):
+        """Tear down and remove a running manager, refusing if others depend on it."""
+        mgr = None
+        for n, m in self.manager_entries:
+            if n == name:
+                mgr = m
+                break
+
+        if mgr is None:
+            print(f"[CLB] Manager '{name}' is not loaded")
+            return
+
+        # Refuse if any other running manager declares a dependency on this one.
+        dependents = [
+            n for n, m in self.manager_entries
+            if n != name and m.enabled and name in m.get_dependencies()
+        ]
+        if dependents:
+            print(f"[CLB] Cannot unload '{name}' — required by: {', '.join(dependents)}")
+            return
+
+        self._warn_unload_impacts(name, mgr)
+
+        if hasattr(mgr, "teardown"):
+            try:
+                mgr.teardown()
+            except Exception as e:
+                print(f"[CLB] Error during teardown of '{name}': {e}")
+
+        self.manager_entries = [(n, m) for n, m in self.manager_entries if n != name]
+        self.status.pop(name, None)
+
+        # Remove this instance from other managers' dependency_instances lists
+        # so they don't hold a dangling reference.
+        for _, m in self.manager_entries:
+            m.dependency_instances = [d for d in m.dependency_instances if d is not mgr]
+
+        self.build_interface()
+
+        # Mark disabled in settings and persist, so the manager does not
+        # start automatically on the next reboot (but its settings are kept).
+        if name in self.settings:
+            self.settings[name]["enabled"] = False
+            try:
+                self.config.save()
+            except Exception as e:
+                print(f"[CLB] Warning: could not persist settings: {e}")
+
+        print(f"[CLB] Manager '{name}' unloaded")
+
     def call(self, name, *args):
         """Invoke a command/service by name."""
         entry = self.interface.get(name)

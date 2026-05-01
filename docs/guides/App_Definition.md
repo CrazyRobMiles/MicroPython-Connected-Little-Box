@@ -168,7 +168,69 @@ After the reset, the device boots with the new `settings.json` and loads only th
 
 ---
 
-## 4. How It Works Internally
+### `load` — Dynamically Load a Manager
+
+```
+> load Pixel
+```
+
+Imports `managers.Pixel_manager`, instantiates `Manager`, merges any previously saved settings with class defaults, calls `setup()` then `setup_services()`, and adds the manager to the running CLB instance. The unified interface is rebuilt immediately so the manager's commands are available straight away. Settings are persisted to `settings.json`, so the manager starts automatically on the next reboot.
+
+If the manager's declared dependencies are not yet running the load is refused and the missing dependencies are listed. Load them first, then retry. If the manager is already running the command is a no-op.
+
+```
+> load Pixel
+[CLB] Manager 'Pixel' loaded  (state: ok)
+```
+
+---
+
+### `unload` — Dynamically Unload a Manager
+
+```
+> unload Pixel
+```
+
+Tears down and removes a running manager. The command refuses if any other loaded manager declares the target as a dependency. If the unload is allowed, warnings are printed for any managers that:
+
+- subscribe to events published by the unloading manager, or
+- hold a live service handle for it (i.e. called `get_service_handle` with its prefix)
+
+Those managers may malfunction once the target is gone. The unloaded manager is set to `"enabled": false` in `settings.json` so it does not restart on the next reboot, but its settings are preserved for a future `load`.
+
+```
+> unload Pixel
+[CLB] Warning: 'App_lamp' holds a service handle for 'Pixel'
+[CLB] The above managers may malfunction after 'Pixel' is unloaded
+[CLB] Manager 'Pixel' unloaded
+```
+
+---
+
+## 4. Dynamic Application Construction
+
+Because `load` and `unload` take effect immediately and persist to `settings.json`, it is possible to assemble a complete running application from the REPL without rebooting or writing any Python:
+
+```
+> load Pixel
+> load Gpio
+> load App_button_light_start
+```
+
+Each step adds one manager to the running system. After `load Pixel` the `Pixel.fill` and related commands are immediately available, so hardware can be verified before the application manager is loaded. After `load App_button_light_start` the full application is running.
+
+This workflow is particularly useful for learning and development:
+
+1. Load each device manager individually and test it from the console (`Pixel.fill 255 0 0`, etc.)
+2. Confirm the hardware is working before writing any application code
+3. Load the application manager on top of the already-proven services
+4. Edit and reload the application manager to iterate without touching the device managers
+
+Because `settings.json` is updated after each `load`, the assembled configuration survives a reboot — there is no separate installation step.
+
+---
+
+## 5. How `select-app` Works Internally
 
 ```
 select-app
@@ -190,7 +252,7 @@ On the next boot, CLB reads the new `settings.json`. Each top-level key that has
 
 ---
 
-## 5. Creating a New Application
+## 6. Creating a New Application
 
 ### Step 1 — Write the manager file
 
@@ -281,7 +343,7 @@ If the configuration is applied and the device reboots into the correct set of m
 
 ---
 
-## 6. Application Settings vs Runtime Settings
+## 7. Application Settings vs Runtime Settings
 
 `default_settings` defines the **starting point** for a device's configuration. Once `select-app` has written it to `settings.json`, individual settings can be changed with the `set` command without re-running `select-app`:
 
@@ -302,7 +364,7 @@ This resets each loaded manager to its own `default_settings` values, but it doe
 
 ---
 
-## 7. Summary
+## 8. Summary
 
 | Concept | Description |
 |---------|-------------|
@@ -312,5 +374,7 @@ This resets each loaded manager to its own `default_settings` values, but it doe
 | `file` attribute | Must match the manifest entry and the app's own settings section key |
 | `apps` command | Lists all registered applications without modifying anything |
 | `select-app` command | Writes the selected app's `app_default_settings` to `settings.json` and reboots |
+| `load` command | Dynamically starts a manager at runtime and persists it to `settings.json` |
+| `unload` command | Tears down a manager at runtime; warns about event subscribers and service handles; sets `enabled: false` in `settings.json` |
 | `reset` command | Restores per-manager defaults for the currently running set of managers |
 | `set` command | Changes individual settings and persists them without rebooting |
