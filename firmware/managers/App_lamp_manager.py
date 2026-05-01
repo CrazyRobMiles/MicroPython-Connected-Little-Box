@@ -190,9 +190,9 @@ class Manager(CLBAppManager):
     def get_interface(self):
         """Return exposed commands"""
         return {
-            "set_color": ("set_color <r> <g> <b>", self.command_set_color),
-            "set_brightness": ("set_brightness <0.0-1.0>", self.command_set_brightness),
-            "status": ("status", self.command_status),
+            "set_color": ("Set lamp colour: set_color(r, g, b)", self.command_set_color),
+            "set_brightness": ("Set brightness: set_brightness(0.0..1.0)", self.command_set_brightness),
+            "status": ("Show lamp status", self.command_status),
         }
 
     def command_set_color(self, r, g, b):

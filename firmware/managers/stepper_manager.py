@@ -257,9 +257,9 @@ class Manager(CLBDeviceManager):
 
     def get_interface(self):
         return {
-            "move":   ("move <mm> [seconds]", self._cmd_move),
-            "rotate": ("rotate <deg> [seconds]", self._cmd_rotate),
-            "arc":    ("arc <radius> <degrees> [seconds]", self._cmd_arc),
+            "move":   ("Move distance in mm: move(mm, seconds)", self._cmd_move),
+            "rotate": ("Rotate in degrees: rotate(deg, seconds)", self._cmd_rotate),
+            "arc":    ("Move in arc: arc(radius, degrees, seconds)", self._cmd_arc),
             "stop":   ("Stop motors immediately", self._cmd_stop),
             "moving": ("Return whether motors are moving", self._cmd_moving),
         }

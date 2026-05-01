@@ -99,10 +99,10 @@ class Manager(CLBDeviceManager):
     # ---------------------------------------------------------
     def get_interface(self):
         return {
-            "check":        ("check - fetch manifest and compare", self.command_check),
-            "check_local":  ("check_local - compare with cached manifest", self.command_check_local),
-            "update":       ("update - full OTA update", self.command_update),
-            "show_versions":("show_versions - print local versions", self.command_show_versions),
+            "check":        ("Fetch manifest and check for updates", self.command_check),
+            "check_local":  ("Compare against cached manifest", self.command_check_local),
+            "update":       ("Fetch manifest and install updates", self.command_update),
+            "show_versions":("Print local file versions", self.command_show_versions),
         }
 
     def command_check(self):

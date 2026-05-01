@@ -114,17 +114,17 @@ class Manager(CLBDeviceManager):
     def get_interface(self):
         return {
             "on": ("Enable pixel animation", self.command_enable),
-            "test": ("Show test pattern: test", self.command_test),
-            "raw_test": ("Show raw pixel: raw_test", self.command_raw_test),
-            "fill": ("Fil with colour: fill <r> <g> <b>", self.command_fill_display),
-            "set_rgb": ("Set pixel: set_rgb <x> <y> <r> <g> <b>", self.command_set_pixel_rgb),
-            "set_brightness": ("Set brightness (0-1): <b>", self.command_set_pixel_brightness),
-            "animate": ("Begin animation: animate", self.command_animate),
-            "show": ("Show pixels: show",self.command_show),
-            "clock": ("Pixel clock",self.command_clock),
-            "pause": ("Pause animation",self.command_pause_animation),
-            "resume": ("Resume animation",self.command_resume_animation),
-            "show_text":("Show text: show_text <x> <y> <r> <g> <b> \"message\"", self.command_show_text)
+            "test": ("Show test pattern", self.command_test),
+            "raw_test": ("Show raw pixel test", self.command_raw_test),
+            "fill": ("Fill display with colour: fill(r, g, b)", self.command_fill_display),
+            "set_rgb": ("Set pixel colour: set_rgb(x, y, r, g, b)", self.command_set_pixel_rgb),
+            "set_brightness": ("Set brightness (0.0-1.0): set_brightness(b)", self.command_set_pixel_brightness),
+            "animate": ("Begin animation", self.command_animate),
+            "show": ("Refresh pixel display", self.command_show),
+            "clock": ("Display time on pixels", self.command_clock),
+            "pause": ("Pause animation", self.command_pause_animation),
+            "resume": ("Resume animation", self.command_resume_animation),
+            "show_text": ("Show scrolling text: show_text(x, y, r, g, b, message)", self.command_show_text)
         }
 
     def command_enable(self):

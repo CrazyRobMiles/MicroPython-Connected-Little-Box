@@ -436,10 +436,10 @@ class Manager(CLBDeviceManager):
     def get_interface(self):
         return {
             "name":         ("Return device name", self.command_name),
-            "send":         ("send <box> <msg>", self.command_send),
+            "send":         ("Send message to device: send(box, msg)", self.command_send),
 
             # File-transfer API
-            "fetch_file":   ("fetch_file <file> [dest] [range]", self.command_fetch_file),
+            "fetch_file":   ("Download file via MQTT: fetch_file(file, dest, range)", self.command_fetch_file),
             "fetch_status": ("Fetch status", self.command_fetch_status),
         }
 

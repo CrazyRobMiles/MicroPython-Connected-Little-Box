@@ -158,9 +158,9 @@ class Manager(CLBDeviceManager):
 
     def get_interface(self):
         return {
-            "set": ("set <pin_name> <state>", self.command_set_pin),
-            "get": ("get <pin_name>", self.command_get_pin),
-            "list": ("list pins", self.command_list_pins),
+            "set": ("Set pin state: set(pin_name, state)", self.command_set_pin),
+            "get": ("Get pin state: get(pin_name)", self.command_get_pin),
+            "list": ("List all configured pins", self.command_list_pins),
         }
 
     def command_set_pin(self, pin_name, state=""):

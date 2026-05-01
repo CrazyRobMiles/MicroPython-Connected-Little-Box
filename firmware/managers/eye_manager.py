@@ -155,12 +155,12 @@ class Manager(CLBDeviceManager):
 
     def get_interface(self):
         return {
-            "centre": ("centre [duration_ms]", self.command_centre),
-            "look": ("look <x> <y> [duration_ms]", self.command_look),
-            "open": ("open <amount> [duration_ms]", self.command_open),
-            "pose": ("pose <x> <y> <open> [duration_ms]", self.command_pose),
-            "blink": ("blink", self.command_blink),
-            "run": ("run <name>", self.command_run_named),
+            "centre": ("Centre the eye: centre(duration_ms)", self.command_centre),
+            "look": ("Move eye to position: look(x, y, duration_ms)", self.command_look),
+            "open": ("Set eyelid openness: open(amount, duration_ms)", self.command_open),
+            "pose": ("Set full eye pose: pose(x, y, open, duration_ms)", self.command_pose),
+            "blink": ("Blink the eye", self.command_blink),
+            "run": ("Run named animation: run(name)", self.command_run_named),
             "stop": ("stop current eye animation", self.command_stop),
             "status": ("show eye pose", self.command_status),
             "start_idle": ("start idle animation", self.command_start_idle),

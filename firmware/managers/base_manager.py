@@ -41,8 +41,8 @@ class CLBManager:
 
         Example:
             return {
-                "fill": ("fill <r> <g> <b>", self.fill_display),
-                "clear": ("clear display", self.clear_display)
+                "fill": ("Fill display with colour: fill(r, g, b)", self.fill_display),
+                "clear": ("Clear display", self.clear_display)
             }
         """
         return {}

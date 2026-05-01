@@ -100,8 +100,8 @@ class Manager(CLBDeviceManager):
     def get_interface(self):
         """Return exposed commands"""
         return {
-            "list": ("list", self.command_list_encoders),
-            "status": ("status <name>", self.command_encoder_status),
+            "list": ("List all encoders", self.command_list_encoders),
+            "status": ("Show encoder status: status(name)", self.command_encoder_status),
         }
 
     def command_list_encoders(self):

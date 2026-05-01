@@ -70,7 +70,7 @@ class Manager(CLBDeviceManager):
 
     def get_interface(self):
         return {
-            "start": ("start <name> <file>", self.command_start_task)
+            "start": ("Start a task: start(name, file)", self.command_start_task)
         }
 
     def command_start_task(self,task_name="main",program_name=""):

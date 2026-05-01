@@ -116,7 +116,7 @@ class Manager(CLBDeviceManager):
     def get_interface(self):
         return {
             "clear": ("Clear screen", self.cmd_clear),
-            "text": ("Display text: text <x> <y> <msg>", self.cmd_text),
+            "text": ("Display text at position: text(x, y, msg)", self.cmd_text),
             "update": ("Force update", self.cmd_update),
         }
 

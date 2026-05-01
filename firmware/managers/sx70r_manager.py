@@ -232,14 +232,14 @@ class Manager(CLBDeviceManager):
             # Registration
             "scan_register":  ("Scan and approve a camera address", self.command_scan_register),
             "approved":       ("Show approved addresses", self.command_show_approved),
-            "set_preferred":  ("set_preferred <AA:BB:CC:DD:EE:FF> (empty clears; auto-approves)", self.command_set_preferred),
+            "set_preferred":  ("Set preferred camera address: set_preferred('AA:BB:CC:DD:EE:FF') — empty string clears", self.command_set_preferred),
 
             # ISO
             "request_iso":    ("Request ISO (non-blocking; emits camera.iso)", self.command_request_iso),
             "get_iso":        ("Return cached ISO or None", self.command_get_iso),
 
             # Shutter
-            "fire_shutter":   ("fire_shutter <exp_hex> [self_timer_s] [t_hold_ms]", self.command_fire_shutter),
+            "fire_shutter":   ("Fire shutter: fire_shutter(exp_hex, self_timer_s, t_hold_ms)", self.command_fire_shutter),
         }
 
     # ---- CLI wrappers ----
