@@ -29,6 +29,7 @@ The system runs on Raspberry Pi Pico and ESP32 devices. A compatibility layer ab
 * [GPIO Manager](/docs/managers/gpio_manager.md) - General-purpose I/O control
 * [Stepper Manager](/docs/managers/stepper_manager.md) - Stepper motor control and movement
 * [Pixel Manager](/docs/managers/pixel_manager.md) - NeoPixel LED strip control
+* [Indicator Manager](/docs/managers/indicator_manager.md) - Individual NeoPixel indicators with fading and colour sequences
 
 #### Servo & Animatronics
 * [PCA9685 Manager](/docs/managers/pca9685_manager.md) - 16-channel I2C PWM/servo controller with orchestration

@@ -35,6 +35,7 @@ from managers.base_manager import CLBAppManager
 from managers.event import Event
 
 import bluetooth
+import gc
 import time
 import machine
 import neopixel
@@ -137,7 +138,29 @@ class Manager(CLBAppManager):
     def __init__(self, clb):
         super().__init__(clb)
 
+    # ------------------------------
+    # CLB lifecycle
+    # ------------------------------
+    def setup(self, settings):
+        
+        super().setup(settings)
+
+        if not self.enabled:
+            self.state = self.STATE_DISABLED
+            self.set_status(3000, "SX-70R camera disabled by config")
+            return
+
+        gc.collect()
         self.ble = bluetooth.BLE()
+
+        print("..starting Bluetooth")
+
+        try:
+            self.ble.active(False)
+            time.sleep_ms(200)
+        except Exception:
+            pass
+
         self.ble.active(True)
         self.ble.irq(self._irq)
 
@@ -169,17 +192,6 @@ class Manager(CLBAppManager):
             "camera.exposure_finished": Event("camera.exposure_finished", "Exposure finished", self),
             "camera.error":             Event("camera.error", "Camera error", self),
         }
-
-    # ------------------------------
-    # CLB lifecycle
-    # ------------------------------
-    def setup(self, settings):
-        super().setup(settings)
-
-        if not self.enabled:
-            self.state = self.STATE_DISABLED
-            self.set_status(3000, "SX-70R camera disabled by config")
-            return
 
         self.debug = bool(self.settings.get("debug", False))
         self.state = self.STATE_IDLE

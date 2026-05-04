@@ -14,6 +14,7 @@ This directory contains documentation for all Connected Little Box (CLB) manager
 - [GPIO Manager](gpio_manager.md) - General I/O pins
 - [Stepper Manager](stepper_manager.md) - Stepper motor control
 - [Pixel Manager](pixel_manager.md) - NeoPixel LED strip control
+- [Indicator Manager](indicator_manager.md) - Individual NeoPixel indicators with fading and colour sequences
 
 ### Servo & Animatronics
 - [PCA9685 Manager](pca9685_manager.md) - 16-channel I2C PWM/servo controller with orchestration
