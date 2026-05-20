@@ -24,6 +24,7 @@ This directory contains documentation for all Connected Little Box (CLB) manager
 - [Rotary Encoder Manager](rotary_encoder_manager.md) - User input via rotary encoders
 - [Tap Manager](tap_manager.md) - Button tap detection (single, double, triple, long-press)
 - [Tilt Manager](tilt_manager.md) - Tilt-sensor gesture detection (tip, pulse, sequence)
+- [HC-SR04 Manager](hcsr04_manager.md) - Ultrasonic distance sensing with threshold crossing events
 
 ### Audio
 - [DFPlayer Manager](dfplayer_manager.md) - DFPlayer Mini MP3 audio playback over UART

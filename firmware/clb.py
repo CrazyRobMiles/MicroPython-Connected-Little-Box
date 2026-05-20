@@ -271,6 +271,7 @@ class CLB:
         print("Stopping the box")
         self.teardown()
         self.running=False
+        machine.reset()
 
     def get_versions(self):
         return {

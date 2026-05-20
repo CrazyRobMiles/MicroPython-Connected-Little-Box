@@ -39,6 +39,7 @@ The system runs on Raspberry Pi Pico and ESP32 devices. A compatibility layer ab
 * [Rotary Encoder Manager](/docs/managers/rotary_encoder_manager.md) - User input via rotary encoders
 * [Tap Manager](/docs/managers/tap_manager.md) - Button tap detection (single, double, triple, long-press)
 * [Tilt Manager](/docs/managers/tilt_manager.md) - Tilt-sensor gesture detection (tip, pulse, sequence)
+* [HC-SR04 Manager](/docs/managers/hcsr04_manager.md) - Ultrasonic distance sensing with threshold crossing events
 
 #### Audio
 * [DFPlayer Manager](/docs/managers/dfplayer_manager.md) - DFPlayer Mini MP3 audio playback over UART
