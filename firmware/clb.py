@@ -853,7 +853,7 @@ class CLB:
         if not entry:
             raise ValueError(f"Unknown command/service: {name}")
         return entry["handler"]
-    
+
     def get_event(self, event_name):
         """
         Locate an event owned by any manager.
@@ -914,4 +914,40 @@ class CLB:
             print(f"  Largest free block : {micropython.mem_info(0) or 'see above'}")
         except Exception:
             pass
+
+
+def run():
+    from device_configurator import DeviceConfigurator
+
+    debug = True
+
+    config = DeviceConfigurator(
+        settings_file="settings.json",
+        safe_pin=-1,
+        use_obfuscation=False
+    )
+
+    if not config.setup(force_online=False):
+        config.setup(force_online=True)
+
+    clb = CLB(config)
+    clb.setup()
+    clb.describe()
+
+    if debug:
+        while clb.running:
+            clb.update()
+            clb.update_console()
+    else:
+        try:
+            while clb.running:
+                clb.update()
+                clb.update_console()
+        except Exception as e:
+            print(e)
+            clb.teardown()
+
+
+if __name__ == '__main__':
+    run()
 
