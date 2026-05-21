@@ -247,7 +247,7 @@
     },
     "clb.py": {
       "version": "2.1.0",
-      "sha": "7b61c08c31d649aa503633ce282ac84a258a4fb3053a54cf18b9927c1d5a19fd",
+      "sha": "9d988354e89e6bf46e74f53bb64cc0399970c5400e7acac1ab17e15a0c7d4d5e",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/clb.py"
     },
     "umqtt/simple.py": {
