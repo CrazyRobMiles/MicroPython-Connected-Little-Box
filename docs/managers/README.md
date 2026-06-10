@@ -35,7 +35,6 @@ This directory contains documentation for all Connected Little Box (CLB) manager
 
 ### System Management
 - [Clock Manager](clock_manager.md) - Time synchronisation
-- [Updater Manager](updater_manager.md) - Firmware updates
 - [HullOS Manager](hullos_manager.md) - Task scheduling
 
 ### Specialised Apps
@@ -76,7 +75,6 @@ To disable a manager, set `"enabled": false` or remove the entry entirely.
 Some managers depend on others. For example:
 - **MQTT Manager** requires WiFi
 - **Clock Manager** requires WiFi
-- **Updater Manager** requires MQTT
 
 If a dependency is disabled, the dependent manager will automatically disable itself.
 

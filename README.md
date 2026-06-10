@@ -50,7 +50,6 @@ The system runs on Raspberry Pi Pico and ESP32 devices. A compatibility layer ab
 
 #### System
 * [Clock Manager](/docs/managers/clock_manager.md) - Time synchronisation and events
-* [Updater Manager](/docs/managers/updater_manager.md) - Firmware update management
 * [HullOS Manager](/docs/managers/hullos_manager.md) - Task scheduling
 
 #### Specialised Apps

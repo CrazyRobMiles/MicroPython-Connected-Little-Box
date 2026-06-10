@@ -1,0 +1,71 @@
+name: Update Firmware Manifest
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'firmware/install-manifest.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update_manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Generate firmware/install-manifest.json
+      run: |
+        python3 - <<'EOF'
+        import json, os, hashlib, re
+
+        EXCLUDE_DIRS = {'.vscode', '.git'}
+        EXCLUDE_FILES = {'settings.json', 'install-manifest.json', 'manifest.json'}
+        REPO = "CrazyRobMiles/MicroPython-Connected-Little-Box"
+        BRANCH = "main"
+
+        VERSION_RE = re.compile(r'(?:__version__|version)\s*=\s*["\']([^"\']+)["\']')
+
+        files = {}
+        for root, dirs, filenames in os.walk('firmware'):
+            dirs[:] = sorted(
+                d for d in dirs
+                if d not in EXCLUDE_DIRS and not d.startswith('.')
+            )
+            for name in sorted(filenames):
+                if name in EXCLUDE_FILES or name.startswith('.'):
+                    continue
+
+                full = os.path.join(root, name)
+                rel = os.path.relpath(full, 'firmware').replace('\\', '/')
+
+                with open(full, 'rb') as fp:
+                    data = fp.read()
+
+                entry = {
+                    "sha": hashlib.sha256(data).hexdigest(),
+                    "url": f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/firmware/{rel}",
+                }
+
+                if rel.endswith('.py'):
+                    match = VERSION_RE.search(data.decode('utf-8', errors='ignore'))
+                    entry["version"] = match.group(1) if match else "0.0.0"
+
+                files[rel] = entry
+
+        with open('firmware/install-manifest.json', 'w') as fp:
+            json.dump({"files": files}, fp, indent=2)
+            fp.write('\n')
+
+        print(f"Wrote {len(files)} entries to firmware/install-manifest.json")
+        EOF
+
+    - name: Commit and push manifest
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-update firmware manifest"
+        file_pattern: firmware/install-manifest.json

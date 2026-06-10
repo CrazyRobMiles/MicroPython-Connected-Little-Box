@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep *)",
-      "Bash(xargs sed *)"
+      "Bash(xargs sed *)",
+      "Bash(gh run *)",
+      "Bash(git rm *)",
+      "Bash(python3 _gen_manifest.py)"
+    ],
+    "additionalDirectories": [
+      "D:\\GitHub\\CLB-robot\\.github\\workflows",
+      "D:\\GitHub\\CLB-robot"
     ]
   }
 }
