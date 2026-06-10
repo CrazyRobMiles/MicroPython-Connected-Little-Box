@@ -1,8 +1,6 @@
 {
   "files": [
     "Clock.json",
-    "HullOS/engine.py",
-    "HullOS/task.py",
     "LICENSE",
     "NewClock.json",
     "app_manifest.py",
@@ -10,6 +8,11 @@
     "clock_settings.json",
     "compat.py",
     "device_configurator.py",
+    "main.py",
+    "packedClock.json",
+    "reset.py",
+    "HullOS/engine.py",
+    "HullOS/task.py",
     "graphics/animations.py",
     "graphics/colours.py",
     "graphics/coord_map.py",
@@ -21,7 +24,6 @@
     "graphics/text.py",
     "lib/ht16k33/ht16k33.py",
     "lib/ht16k33/ht16k33segment14.py",
-    "main.py",
     "managers/App_Eye_Tracker.py",
     "managers/App_GFX_test_manager.py",
     "managers/App_Ht16k33_test_manager.py",
@@ -53,9 +55,6 @@
     "managers/uart_manager.py",
     "managers/updater_manager.py",
     "managers/wifi_manager.py",
-    "manifest.json",
-    "packedClock.json",
-    "reset.py",
     "umqtt/simple.py"
   ]
 }
