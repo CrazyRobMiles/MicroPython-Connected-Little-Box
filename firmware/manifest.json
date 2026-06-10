@@ -6,8 +6,8 @@
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/compat.py"
     },
     "main.py": {
-      "version": "2.0.0",
-      "sha": "b5558dfdafc7d45bc9efe8321c3b78b0d5c6f8c2b458874410682a777a326576",
+      "version": "0.0.0",
+      "sha": "6e183ddda3f43ddae756c278456c7609e3104569d1687a2fec938c09b7dc66d1",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/main.py"
     },
     "reset.py": {
@@ -59,11 +59,6 @@
       "version": "2.0.0",
       "sha": "a8fbc0769029b6a1903d0b1b1e95ba788b90f93755bf02295f907b5eca64f51e",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/graphics/text.py"
-    },
-    "exercises/exercise_01.py": {
-      "version": "0.0.0",
-      "sha": "2fc4157e7867baa47ce8b364827dc5c81763011aec113e7fdd9c9ad1c8d12ef4",
-      "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/exercises/exercise_01.py"
     },
     "HullOS/task.py": {
       "version": "2.0.0",
@@ -247,7 +242,7 @@
     },
     "clb.py": {
       "version": "2.1.0",
-      "sha": "9d988354e89e6bf46e74f53bb64cc0399970c5400e7acac1ab17e15a0c7d4d5e",
+      "sha": "147250a9d529bbf2eb5790483575f4c6e90f90a3f817f1c4e710e6c444ede45a",
       "url": "https://raw.githubusercontent.com/CrazyRobMiles/MicroPython-Connected-Little-Box/main/firmware/clb.py"
     },
     "umqtt/simple.py": {
